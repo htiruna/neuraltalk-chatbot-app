@@ -9,21 +9,19 @@ import {
   useState,
 } from 'react';
 import toast from 'react-hot-toast';
+
 import Image from 'next/image';
 
-import {
-  saveConversation,
-  saveConversations,
-} from '@/utils/app/conversation';
+import { saveConversation, saveConversations } from '@/utils/app/conversation';
 import { throttle } from '@/utils/data/throttle';
 
 import { ChatBody, Conversation, Message } from '@/types/chat';
 
-import HomeContext from '@/contexts/home.context';
-
 import { ChatInput } from './ChatInput';
 import { ChatLoader } from './ChatLoader';
 import { MemoizedChatMessage } from './MemoizedChatMessage';
+
+import HomeContext from '@/contexts/home.context';
 
 interface Props {
   stopConversationRef: MutableRefObject<boolean>;
@@ -31,11 +29,7 @@ interface Props {
 
 export const Chat = memo(({ stopConversationRef }: Props) => {
   const {
-    state: {
-      selectedConversation,
-      conversations,
-      loading,
-    },
+    state: { selectedConversation, conversations, loading },
     handleUpdateConversation,
     dispatch: homeDispatch,
   } = useContext(HomeContext);
@@ -84,7 +78,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
         const endpoint = 'api/chat';
         const body = JSON.stringify(chatBody);
         console.log('sending body to api/chat', body);
-        
+
         const controller = new AbortController();
         const response = await fetch(endpoint, {
           method: 'POST',
@@ -155,8 +149,8 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
             });
           } else {
             console.log('reading chunks after first');
-            const updatedMessages: Message[] =
-              updatedConversation.messages.map((message, index) => {
+            const updatedMessages: Message[] = updatedConversation.messages.map(
+              (message, index) => {
                 if (index === updatedConversation.messages.length - 1) {
                   return {
                     ...message,
@@ -164,7 +158,8 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                   };
                 }
                 return message;
-              });
+              },
+            );
             updatedConversation = {
               ...updatedConversation,
               messages: updatedMessages,
@@ -192,11 +187,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
         homeDispatch({ field: 'messageIsStreaming', value: false });
       }
     },
-    [
-      conversations,
-      selectedConversation,
-      stopConversationRef,
-    ],
+    [conversations, selectedConversation, stopConversationRef],
   );
 
   const handleScroll = () => {
@@ -275,7 +266,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
 
   return (
     <div className="relative flex-1 overflow-hidden bg-white dark:bg-[#343541]">
-        {(
+      {
         <>
           <div
             className="max-h-full overflow-x-hidden"
@@ -288,29 +279,46 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                   <div className="text-center text-3xl font-semibold text-gray-800 dark:text-gray-100">
                     Curriculum Management
                   </div>
-                  <div className="mx-auto my-4 p-4 bg-white dark:bg-gray-800 rounded-lg shadow-md relative">
-                    <Image
-                      src="/curriculum-mgmt.png"
-                      alt="Curriculum Management"
-                      width={1262}
-                      height={1724}
-                      className="max-w-[175px]"
-                    />
-                  </div>
-                  <div className="flex h-full flex-col space-y-4 rounded-lg border border-neutral-200 p-4 dark:border-neutral-600">
-                    <div className="text-[12px] text-black/50 dark:text-white/50 text-sm space-y-4">
-                      <p>Hi there :) I&#39;m a chatbot trained on the Curriculum Management Configuration and Processing Workbook.</p>
-                      <p>
-                        You can ask me questions such as:
-                      </p>
+                  <div className="flex items-center h-full flex-row space-x-6 rounded-lg border border-neutral-200 p-4 dark:border-neutral-600">
+                    <div className="shadow-md">
+                      <Image
+                        src="/curriculum-mgmt.png"
+                        alt="Curriculum Management"
+                        width={1262}
+                        height={1724}
+                        className="max-w-[175px]"
+                      />
                     </div>
-                    <ul className="list-disc list-inside text-[12px] text-black/50 dark:text-white/50 text-sm space-y-2">
-                      <li>What fields are mandatory when creating or maintaining a Study Package Availability?</li>
-                      <li>Can a Structure or Template be defined?</li>
-                      <li>How can you determine whether templates can be created for Curriculum Items of a certain type?</li>
-                      <li>What Curriculum Categories are defined using the Filter on the Curriculum Types screen?</li>
-                      <li>How many Curriculum Types are configured per Curriculum Level?</li>
-                    </ul>
+                    <div>
+                      <div className="text-[12px] text-black/50 dark:text-white/50 text-sm space-y-4 mb-4">
+                        <p>
+                          Hi there! I&#39;m a chatbot trained on the Curriculum
+                          Management Configuration and Processing Workbook.
+                        </p>
+                        <p className="font-bold">
+                          Examples of questions you can ask me:
+                        </p>
+                      </div>
+                      <ul className="list-disc list-inside text-[12px] text-black/50 dark:text-white/50 text-sm space-y-2">
+                        <li>
+                          What fields are mandatory when creating a Study
+                          Package Availability?
+                        </li>
+                        <li>Can a Structure or Template be defined?</li>
+                        <li>
+                          How can you determine whether templates can be created
+                          for Curriculums?
+                        </li>
+                        <li>
+                          What Categories are defined on the Curriculum Types
+                          screen?
+                        </li>
+                        <li>
+                          How many Curriculum Types are configured per
+                          Curriculum Level?
+                        </li>
+                      </ul>
+                    </div>
                   </div>
                 </div>
               </>
@@ -368,7 +376,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
             showScrollDownButton={showScrollDownButton}
           />
         </>
-      )}
+      }
     </div>
   );
 });
