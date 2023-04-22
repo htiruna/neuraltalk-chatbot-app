@@ -10,6 +10,7 @@
     "format": "prettier --write ."
   },
   "dependencies": {
+    "@auth0/nextjs-auth0": "^2.5.0",
     "@dqbd/tiktoken": "^1.0.2",
     "@pinecone-database/pinecone": "^0.0.14",
     "@tabler/icons-react": "^2.9.0",

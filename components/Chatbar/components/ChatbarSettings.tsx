@@ -1,12 +1,15 @@
 import { IconLogout } from '@tabler/icons-react';
 import { useContext } from 'react';
+import { useRouter } from 'next/router';
 
-import HomeContext from '@/pages/api/home/home.context';
+import HomeContext from '@/pages/home/home.context';
 import ChatbarContext from '../Chatbar.context';
 import { ClearConversations } from './ClearConversations';
 import { SidebarButton } from '../../Sidebar/SidebarButton';
 
 export const ChatbarSettings = () => {
+  const router = useRouter();
+  
   const {
     state: {
       conversations,
@@ -27,7 +30,7 @@ export const ChatbarSettings = () => {
       <SidebarButton
         text={'Logout'}
         icon={<IconLogout size={18} />}
-        onClick={() => {}}
+        onClick={() => { router.push('/api/auth/logout') }}
       />
     </div>
   );

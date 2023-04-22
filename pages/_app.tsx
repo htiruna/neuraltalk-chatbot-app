@@ -6,6 +6,7 @@ import type { AppProps } from 'next/app';
 import { Inter } from 'next/font/google';
 
 import '@/styles/globals.css';
+import { UserProvider } from '@auth0/nextjs-auth0/client';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -16,7 +17,9 @@ function App({ Component, pageProps }: AppProps<{}>) {
     <div className={inter.className}>
       <Toaster />
       <QueryClientProvider client={queryClient}>
-        <Component {...pageProps} />
+        <UserProvider>
+          <Component {...pageProps} />
+        </UserProvider>
       </QueryClientProvider>
     </div>
   );

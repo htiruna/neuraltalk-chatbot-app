@@ -5,7 +5,7 @@ import { useContext } from 'react';
 
 import { OpenAIModel } from '@/types/openai';
 
-import HomeContext from '@/pages/api/home/home.context';
+import HomeContext from '@/pages/home/home.context';
 
 export const ModelSelect = () => {
   
