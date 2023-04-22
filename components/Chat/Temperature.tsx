@@ -4,7 +4,7 @@ import { FC, useContext, useState } from 'react';
 
 import { DEFAULT_TEMPERATURE } from '@/utils/app/const';
 
-import HomeContext from '@/pages/home/home.context';
+import HomeContext from '@/contexts/home.context';
 
 interface Props {
   label: string;

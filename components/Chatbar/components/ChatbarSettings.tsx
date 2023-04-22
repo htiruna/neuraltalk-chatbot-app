@@ -2,7 +2,7 @@ import { IconLogout } from '@tabler/icons-react';
 import { useContext } from 'react';
 import { useRouter } from 'next/router';
 
-import HomeContext from '@/pages/home/home.context';
+import HomeContext from '@/contexts/home.context';
 import ChatbarContext from '../Chatbar.context';
 import { ClearConversations } from './ClearConversations';
 import { SidebarButton } from '../../Sidebar/SidebarButton';

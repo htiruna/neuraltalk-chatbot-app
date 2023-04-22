@@ -19,29 +19,30 @@ import { getSettings } from '@/utils/app/settings';
 
 import { Conversation } from '@/types/chat';
 import { KeyValuePair } from '@/types/data';
-import { OpenAIModelID, OpenAIModels, fallbackModelID } from '@/types/openai';
 
 import { Chat } from '@/components/Chat/Chat';
 import { Chatbar } from '@/components/Chatbar/Chatbar';
 import { Navbar } from '@/components/Mobile/Navbar';
 import Loading from '@/components/Loading';
 
-import HomeContext from './home.context';
-import { HomeInitialState, initialState } from './home.state';
-
 import { v4 as uuidv4 } from 'uuid';
+import { HomeInitialState } from '@/types/home';
+import HomeContext from '@/contexts/home.context';
 
-interface Props {
-  serverSideApiKeyIsSet: boolean;
-  serverSidePluginKeysSet: boolean;
-  defaultModelId: OpenAIModelID;
-}
+const initialState: HomeInitialState = {
+  loading: false,
+  lightMode: 'dark',
+  messageIsStreaming: false,
+  conversations: [],
+  selectedConversation: undefined,
+  currentMessage: undefined,
+  temperature: 1,
+  showChatbar: true,
+  messageError: false,
+  searchTerm: ''
+};
 
-const Home = ({
-  serverSideApiKeyIsSet,
-  serverSidePluginKeysSet,
-  defaultModelId,
-}: Props) => {
+const Home = () => {
   const contextValue = useCreateReducer<HomeInitialState>({
     initialState,
   });
@@ -75,15 +76,8 @@ const Home = ({
       id: uuidv4(),
       name: 'New Conversation',
       messages: [],
-      model: lastConversation?.model || {
-        id: OpenAIModels[defaultModelId].id,
-        name: OpenAIModels[defaultModelId].name,
-        maxLength: OpenAIModels[defaultModelId].maxLength,
-        tokenLimit: OpenAIModels[defaultModelId].tokenLimit,
-      },
       prompt: DEFAULT_SYSTEM_PROMPT,
       temperature: lastConversation?.temperature ?? DEFAULT_TEMPERATURE,
-      folderId: null,
     };
 
     const updatedConversations = [...conversations, newConversation];
@@ -136,27 +130,11 @@ const Home = ({
 
     if (window.innerWidth < 640) {
       dispatch({ field: 'showChatbar', value: false });
-      dispatch({ field: 'showPromptbar', value: false });
     }
 
     const showChatbar = localStorage.getItem('showChatbar');
     if (showChatbar) {
       dispatch({ field: 'showChatbar', value: showChatbar === 'true' });
-    }
-
-    const showPromptbar = localStorage.getItem('showPromptbar');
-    if (showPromptbar) {
-      dispatch({ field: 'showPromptbar', value: showPromptbar === 'true' });
-    }
-
-    const folders = localStorage.getItem('folders');
-    if (folders) {
-      dispatch({ field: 'folders', value: JSON.parse(folders) });
-    }
-
-    const prompts = localStorage.getItem('prompts');
-    if (prompts) {
-      dispatch({ field: 'prompts', value: JSON.parse(prompts) });
     }
 
     const conversationHistory = localStorage.getItem('conversationHistory');
@@ -190,18 +168,13 @@ const Home = ({
           id: uuidv4(),
           name: 'New Conversation',
           messages: [],
-          model: OpenAIModels[defaultModelId],
           prompt: DEFAULT_SYSTEM_PROMPT,
           temperature: lastConversation?.temperature ?? DEFAULT_TEMPERATURE,
-          folderId: null,
         },
       });
     }
   }, [
-    defaultModelId,
-    dispatch,
-    serverSideApiKeyIsSet,
-    serverSidePluginKeysSet,
+    dispatch
   ]);
 
   return (

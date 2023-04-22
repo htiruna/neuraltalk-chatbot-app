@@ -1,6 +1,5 @@
-import { IconFolderPlus, IconMistOff, IconPlus } from '@tabler/icons-react';
+import { IconMistOff, IconPlus } from '@tabler/icons-react';
 import { ReactNode } from 'react';
-import { useTranslation } from 'react-i18next';
 
 import {
   CloseSidebarButton,
@@ -15,7 +14,6 @@ interface Props<T> {
   side: 'left' | 'right';
   items: T[];
   itemComponent: ReactNode;
-  folderComponent: ReactNode;
   footerComponent?: ReactNode;
   searchTerm: string;
   handleSearchTerm: (searchTerm: string) => void;
@@ -30,7 +28,6 @@ const Sidebar = <T,>({
   side,
   items,
   itemComponent,
-  folderComponent,
   footerComponent,
   searchTerm,
   handleSearchTerm,
@@ -75,12 +72,6 @@ const Sidebar = <T,>({
         />
 
         <div className="flex-grow overflow-auto">
-          {items?.length > 0 && (
-            <div className="flex border-b border-white/20 pb-2">
-              {folderComponent}
-            </div>
-          )}
-
           {items?.length > 0 ? (
             <div
               className="pt-2"
