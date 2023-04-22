@@ -24,7 +24,6 @@ import { Prompt } from '@/types/prompt';
 
 import HomeContext from '@/pages/api/home/home.context';
 
-import { PluginSelect } from './PluginSelect';
 import { PromptList } from './PromptList';
 import { VariableModal } from './VariableModal';
 
@@ -74,12 +73,7 @@ export const ChatInput = ({
     const maxLength = selectedConversation?.model.maxLength;
 
     if (maxLength && value.length > maxLength) {
-      alert(
-        t(
-          `Message limit is {{maxLength}} characters. You have entered {{valueLength}} characters.`,
-          { maxLength, valueLength: value.length },
-        ),
-      );
+      alert(`Message limit is ${maxLength} characters. You have entered ${value.length} characters.`);
       return;
     }
 
@@ -325,7 +319,7 @@ export const ChatInput = ({
               }`,
             }}
             placeholder={
-              'Type a message or type "/" to select a prompt...' || ''
+              'Send a message...' || ''
             }
             value={content}
             rows={1}

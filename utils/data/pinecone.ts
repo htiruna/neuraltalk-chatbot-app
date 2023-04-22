@@ -4,6 +4,10 @@ if (!process.env.PINECONE_ENVIRONMENT || !process.env.PINECONE_API_KEY) {
   throw new Error('Pinecone environment or api key vars missing');
 }
 
+if (!process.env.PINECONE_INDEX_NAME) {
+  throw new Error('Missing Pinecone index name in .env file');
+}
+
 async function initPinecone() {
   try {
     const pinecone = new PineconeClient();
@@ -21,3 +25,5 @@ async function initPinecone() {
 }
 
 export const pinecone = await initPinecone();
+export const PINECONE_INDEX_NAME = process.env.PINECONE_INDEX_NAME;
+export const PINECONE_NAME_SPACE = 'curriculum-mgmt';

@@ -21,7 +21,6 @@ interface Props<T> {
   handleSearchTerm: (searchTerm: string) => void;
   toggleOpen: () => void;
   handleCreateItem: () => void;
-  handleCreateFolder: () => void;
   handleDrop: (e: any) => void;
 }
 
@@ -37,7 +36,6 @@ const Sidebar = <T,>({
   handleSearchTerm,
   toggleOpen,
   handleCreateItem,
-  handleCreateFolder,
   handleDrop,
 }: Props<T>) => {
   const allowDrop = (e: any) => {

@@ -11,7 +11,6 @@ import { Prompt } from '@/types/prompt';
 import HomeContext from '@/pages/api/home/home.context';
 
 import { PromptFolders } from './components/PromptFolders';
-import { PromptbarSettings } from './components/PromptbarSettings';
 import { Prompts } from './components/Prompts';
 
 import Sidebar from '../Sidebar';
@@ -30,7 +29,6 @@ const Promptbar = () => {
   const {
     state: { prompts, defaultModelId, showPromptbar },
     dispatch: homeDispatch,
-    handleCreateFolder,
   } = useContext(HomeContext);
 
   const {
@@ -142,7 +140,6 @@ const Promptbar = () => {
         }
         toggleOpen={handleTogglePromptbar}
         handleCreateItem={handleCreatePrompt}
-        handleCreateFolder={() => handleCreateFolder(t('New folder'), 'prompt')}
         handleDrop={handleDrop}
       />
     </PromptbarContext.Provider>
