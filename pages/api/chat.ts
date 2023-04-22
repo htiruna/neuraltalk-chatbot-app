@@ -1,8 +1,14 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
+
+import {
+  PINECONE_INDEX_NAME,
+  PINECONE_NAME_SPACE,
+  pinecone,
+} from '@/utils/data/pinecone';
+import { makeChain } from '@/utils/server/makechain';
+
 import { OpenAIEmbeddings } from 'langchain/embeddings';
 import { PineconeStore } from 'langchain/vectorstores';
-import { makeChain } from '@/utils/server/makechain';
-import { pinecone, PINECONE_INDEX_NAME, PINECONE_NAME_SPACE } from '@/utils/data/pinecone';
 
 export default async function handler(
   req: NextApiRequest,
@@ -15,7 +21,7 @@ export default async function handler(
   }
   // OpenAI recommends replacing newlines with spaces for best results
   const sanitizedQuestion = question.trim().replaceAll('\n', ' ');
-  
+
   const index = pinecone.Index(PINECONE_INDEX_NAME);
 
   /* create vectorstore*/
@@ -38,7 +44,7 @@ export default async function handler(
     res.write(data);
   };
 
-  sendData('');
+  sendData(' ');
 
   //create chain
   const chain = makeChain(vectorStore, (token: string) => {
