@@ -25,7 +25,6 @@ import { ChatInput } from './ChatInput';
 import { ChatLoader } from './ChatLoader';
 import { ErrorMessageDiv } from './ErrorMessageDiv';
 import { ModelSelect } from './ModelSelect';
-import { TemperatureSlider } from './Temperature';
 import { MemoizedChatMessage } from './MemoizedChatMessage';
 
 interface Props {
@@ -39,7 +38,6 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
       conversations,
       models,
       apiKey,
-      serverSideApiKeyIsSet,
       modelError,
       loading,
     },
@@ -82,13 +80,6 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
         });
         homeDispatch({ field: 'loading', value: true });
         homeDispatch({ field: 'messageIsStreaming', value: true });
-        // const chatBody: ChatBody = {
-        //   model: updatedConversation.model,
-        //   messages: updatedConversation.messages,
-        //   key: apiKey,
-        //   prompt: updatedConversation.prompt,
-        //   temperature: updatedConversation.temperature,
-        // };
 
         const chatBody = {
           question: message?.content,
@@ -149,6 +140,8 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
           console.log('reading', value);
           done = doneReading;
           const chunkValue = decoder.decode(value);
+          console.log('chunkValue', chunkValue);
+
           text += chunkValue;
           if (isFirst) {
             console.log('reading first chunk');
@@ -303,30 +296,31 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
           >
             {selectedConversation?.messages.length === 0 ? (
               <>
-                <div className="mx-auto flex flex-col space-y-5 md:space-y-10 px-3 pt-5 md:pt-12 sm:max-w-[600px]">
+                <div className="mx-auto flex flex-col space-y-5 md:space-y-10 px-3 pt-5 md:pt-12 sm:max-w-[800px]">
                   <div className="text-center text-3xl font-semibold text-gray-800 dark:text-gray-100">
                     {models.length === 0 ? (
                       <div>
                         <Spinner size="16px" className="mx-auto" />
                       </div>
                     ) : (
-                      'NeuralTalk'
+                      'Curriculum Management'
                     )}
                   </div>
-
-                  {models.length > 0 && (
-                    <div className="flex h-full flex-col space-y-4 rounded-lg border border-neutral-200 p-4 dark:border-neutral-600">
-                      <TemperatureSlider
-                        label={'Temperature'}
-                        onChangeTemperature={(temperature) =>
-                          handleUpdateConversation(selectedConversation, {
-                            key: 'temperature',
-                            value: temperature,
-                          })
-                        }
-                      />
+                  <div className="flex h-full flex-col space-y-4 rounded-lg border border-neutral-200 p-4 dark:border-neutral-600">
+                    <div className="text-[12px] text-black/50 dark:text-white/50 text-sm space-y-4">
+                      <p>Hi there :) I'm a chatbot trained on the Curriculum Management, Configuration and Processing Workbook.</p>
+                      <p>
+                        You can ask me questions such as:
+                      </p>
                     </div>
-                  )}
+                    <ul className="list-disc list-inside text-[12px] text-black/50 dark:text-white/50 text-sm space-y-2">
+                      <li>What fields are mandatory when creating or maintaining a Study Package Availability?</li>
+                      <li>Can a Structure or Template be defined?</li>
+                      <li>How can you determine whether templates can be created for Curriculum Items of a certain type?</li>
+                      <li>What Curriculum Categories are defined using the Filter on the Curriculum Types screen?</li>
+                      <li>How many Curriculum Types are configured per Curriculum Level?</li>
+                    </ul>
+                  </div>
                 </div>
               </>
             ) : (

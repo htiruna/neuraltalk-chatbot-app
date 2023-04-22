@@ -15,7 +15,7 @@ export default async function handler(
   }
   // OpenAI recommends replacing newlines with spaces for best results
   const sanitizedQuestion = question.trim().replaceAll('\n', ' ');
-
+  
   const index = pinecone.Index(PINECONE_INDEX_NAME);
 
   /* create vectorstore*/
@@ -35,14 +35,14 @@ export default async function handler(
   });
 
   const sendData = (data: string) => {
-    res.write(`data: ${data}\n\n`);
+    res.write(data);
   };
 
-  sendData(JSON.stringify({ data: '' }));
+  sendData('');
 
   //create chain
   const chain = makeChain(vectorStore, (token: string) => {
-    sendData(JSON.stringify({ data: token }));
+    sendData(token);
   });
 
   try {
@@ -56,7 +56,6 @@ export default async function handler(
   } catch (error) {
     console.log('error', error);
   } finally {
-    sendData('[DONE]');
     res.end();
   }
 }
