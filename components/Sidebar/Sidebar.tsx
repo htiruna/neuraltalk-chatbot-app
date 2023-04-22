@@ -1,6 +1,8 @@
 import { IconMistOff, IconPlus } from '@tabler/icons-react';
 import { ReactNode } from 'react';
 
+import Image from 'next/image';
+
 import {
   CloseSidebarButton,
   OpenSidebarButton,
@@ -50,11 +52,14 @@ const Sidebar = <T,>({
   return isOpen ? (
     <div>
       <div
-        className={`fixed top-0 ${side}-0 z-40 flex h-full w-[260px] flex-none flex-col space-y-2 bg-black p-2 text-[14px] transition-all sm:relative sm:top-0`}
+        className={`fixed top-0 ${side}-0 z-40 flex h-full w-[260px] flex-none flex-col space-y-2 bg-gray-300 p-2 text-[14px] transition-all sm:relative sm:top-0`}
       >
+        <div className="mx-auto">
+          <Image src="/logo.png" width={150} height={100} alt="NeuralTalk" />
+        </div>
         <div className="flex items-center">
           <button
-            className="text-sidebar flex w-full flex-shrink-0 cursor-pointer select-none items-center gap-3 rounded-md border border-white/20 p-3 text-white transition-colors duration-200 hover:bg-gray-500/10"
+            className="text-sidebar flex w-full flex-shrink-0 cursor-pointer select-none items-center gap-3 rounded-md border border-neutral-400 p-3 bg-black text-white transition-colors duration-200 hover:bg-black/80"
             onClick={() => {
               handleCreateItem();
               handleSearchTerm('');
@@ -63,14 +68,12 @@ const Sidebar = <T,>({
             <IconPlus size={16} />
             {addItemButtonTitle}
           </button>
-
         </div>
         <Search
           placeholder={'Search...' || ''}
           searchTerm={searchTerm}
           onSearch={handleSearchTerm}
         />
-
         <div className="flex-grow overflow-auto">
           {items?.length > 0 ? (
             <div
@@ -83,11 +86,9 @@ const Sidebar = <T,>({
               {itemComponent}
             </div>
           ) : (
-            <div className="mt-8 select-none text-center text-white opacity-50">
+            <div className="mt-8 select-none text-center text-black opacity-50">
               <IconMistOff className="mx-auto mb-3" />
-              <span className="text-[14px] leading-normal">
-                {'No data.'}
-              </span>
+              <span className="text-[14px] leading-normal">{'No data.'}</span>
             </div>
           )}
         </div>

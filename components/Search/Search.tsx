@@ -1,8 +1,6 @@
 import { IconX } from '@tabler/icons-react';
 import { FC } from 'react';
 
-
-
 interface Props {
   placeholder: string;
   searchTerm: string;
@@ -20,7 +18,7 @@ const Search: FC<Props> = ({ placeholder, searchTerm, onSearch }) => {
   return (
     <div className="relative flex items-center">
       <input
-        className="w-full flex-1 rounded-md border border-neutral-600 bg-black px-4 py-3 pr-10 text-[14px] leading-3 text-white"
+        className="w-full flex-1 rounded-md border border-neutral-400 bg-white px-4 py-3 pr-10 text-[14px] leading-3 text-black"
         type="text"
         placeholder={placeholder || ''}
         value={searchTerm}
