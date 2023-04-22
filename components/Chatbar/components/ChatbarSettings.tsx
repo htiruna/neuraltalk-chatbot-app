@@ -1,38 +1,21 @@
-import { IconFileExport, IconSettings } from '@tabler/icons-react';
-import { useContext, useState } from 'react';
-
-
+import { IconLogout } from '@tabler/icons-react';
+import { useContext } from 'react';
 
 import HomeContext from '@/pages/api/home/home.context';
-
-import { SettingDialog } from '@/components/Settings/SettingDialog';
-
-import { Import } from '../../Settings/Import';
-import { Key } from '../../Settings/Key';
-import { SidebarButton } from '../../Sidebar/SidebarButton';
 import ChatbarContext from '../Chatbar.context';
 import { ClearConversations } from './ClearConversations';
-import { PluginKeys } from './PluginKeys';
+import { SidebarButton } from '../../Sidebar/SidebarButton';
 
 export const ChatbarSettings = () => {
-  const [isSettingDialogOpen, setIsSettingDialog] = useState<boolean>(false);
-
   const {
     state: {
-      apiKey,
-      lightMode,
-      serverSideApiKeyIsSet,
-      serverSidePluginKeysSet,
       conversations,
     },
     dispatch: homeDispatch,
   } = useContext(HomeContext);
 
   const {
-    handleClearConversations,
-    handleImportConversations,
-    handleExportData,
-    handleApiKeyChange,
+    handleClearConversations
   } = useContext(ChatbarContext);
 
   return (
@@ -41,31 +24,10 @@ export const ChatbarSettings = () => {
         <ClearConversations onClearConversations={handleClearConversations} />
       ) : null}
 
-      <Import onImport={handleImportConversations} />
-
-      {/* <SidebarButton
-        text={t('Export data')}
-        icon={<IconFileExport size={18} />}
-        onClick={() => handleExportData()}
-      /> */}
-
       <SidebarButton
-        text={'Settings'}
-        icon={<IconSettings size={18} />}
-        onClick={() => setIsSettingDialog(true)}
-      />
-
-      {!serverSideApiKeyIsSet ? (
-        <Key apiKey={apiKey} onApiKeyChange={handleApiKeyChange} />
-      ) : null}
-
-      {/* {!serverSidePluginKeysSet ? <PluginKeys /> : null} */}
-
-      <SettingDialog
-        open={isSettingDialogOpen}
-        onClose={() => {
-          setIsSettingDialog(false);
-        }}
+        text={'Logout'}
+        icon={<IconLogout size={18} />}
+        onClick={() => {}}
       />
     </div>
   );

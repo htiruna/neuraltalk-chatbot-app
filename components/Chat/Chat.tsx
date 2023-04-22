@@ -308,7 +308,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                   </div>
                   <div className="flex h-full flex-col space-y-4 rounded-lg border border-neutral-200 p-4 dark:border-neutral-600">
                     <div className="text-[12px] text-black/50 dark:text-white/50 text-sm space-y-4">
-                      <p>Hi there :) I'm a chatbot trained on the Curriculum Management, Configuration and Processing Workbook.</p>
+                      <p>Hi there :) I'm a chatbot trained on the Curriculum Management Configuration and Processing Workbook.</p>
                       <p>
                         You can ask me questions such as:
                       </p>
