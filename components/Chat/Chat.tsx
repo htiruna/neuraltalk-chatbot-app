@@ -36,7 +36,6 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
 
   const [currentMessage, setCurrentMessage] = useState<Message>();
   const [autoScrollEnabled, setAutoScrollEnabled] = useState<boolean>(true);
-  const [showSettings, setShowSettings] = useState<boolean>(false);
   const [showScrollDownButton, setShowScrollDownButton] =
     useState<boolean>(false);
 
@@ -70,14 +69,24 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
         homeDispatch({ field: 'loading', value: true });
         homeDispatch({ field: 'messageIsStreaming', value: true });
 
+        const messages = updatedConversation?.messages;
+        const history: string[][] = messages.reduce(
+          (acc: string[][], { content }, i) => {
+            if (i % 2 === 0 && i < messages.length - 1) {
+              acc.push([content, messages[i + 1].content]);
+            }
+            return acc;
+          },
+          [],
+        );
+
         const chatBody = {
           question: message?.content,
-          history: [],
+          history,
         };
 
         const endpoint = 'api/chat';
         const body = JSON.stringify(chatBody);
-        console.log('sending body to api/chat', body);
 
         const controller = new AbortController();
         const response = await fetch(endpoint, {
