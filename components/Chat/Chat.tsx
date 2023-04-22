@@ -9,6 +9,7 @@ import {
   useState,
 } from 'react';
 import toast from 'react-hot-toast';
+import Image from 'next/image';
 
 import {
   saveConversation,
@@ -22,7 +23,6 @@ import HomeContext from '@/contexts/home.context';
 
 import { ChatInput } from './ChatInput';
 import { ChatLoader } from './ChatLoader';
-import { ErrorMessageDiv } from './ErrorMessageDiv';
 import { MemoizedChatMessage } from './MemoizedChatMessage';
 
 interface Props {
@@ -81,7 +81,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
           history: [],
         };
 
-        const endpoint = 'api/chat2';
+        const endpoint = 'api/chat';
         const body = JSON.stringify(chatBody);
         console.log('sending body to api/chat', body);
         
@@ -222,10 +222,6 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
     });
   };
 
-  const handleSettings = () => {
-    setShowSettings(!showSettings);
-  };
-
   const onClearAll = () => {
     if (
       confirm('Are you sure you want to clear all messages?') &&
@@ -291,6 +287,15 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                 <div className="mx-auto flex flex-col space-y-5 md:space-y-10 px-3 pt-5 md:pt-12 sm:max-w-[800px]">
                   <div className="text-center text-3xl font-semibold text-gray-800 dark:text-gray-100">
                     Curriculum Management
+                  </div>
+                  <div className="mx-auto my-4 p-4 bg-white dark:bg-gray-800 rounded-lg shadow-md relative">
+                    <Image
+                      src="/curriculum-mgmt.png"
+                      alt="Curriculum Management"
+                      width={1262}
+                      height={1724}
+                      className="max-w-[175px]"
+                    />
                   </div>
                   <div className="flex h-full flex-col space-y-4 rounded-lg border border-neutral-200 p-4 dark:border-neutral-600">
                     <div className="text-[12px] text-black/50 dark:text-white/50 text-sm space-y-4">
