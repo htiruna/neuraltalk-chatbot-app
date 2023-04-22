@@ -15,7 +15,7 @@ import Image from 'next/image';
 import { saveConversation, saveConversations } from '@/utils/app/conversation';
 import { throttle } from '@/utils/data/throttle';
 
-import { ChatBody, Conversation, Message } from '@/types/chat';
+import { Conversation, Message } from '@/types/chat';
 
 import { ChatInput } from './ChatInput';
 import { ChatLoader } from './ChatLoader';
