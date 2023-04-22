@@ -1,7 +1,7 @@
 import { Message } from '@/types/chat';
 import { OpenAIModel } from '@/types/openai';
 
-import { AZURE_DEPLOYMENT_ID, OPENAI_API_HOST, OPENAI_API_TYPE, OPENAI_API_VERSION, OPENAI_ORGANIZATION } from '../app/const';
+import { OPENAI_API_HOST } from '../app/const';
 
 import {
   ParsedEvent,
@@ -31,25 +31,15 @@ export const OpenAIStream = async (
   messages: Message[],
 ) => {
   let url = `${OPENAI_API_HOST}/v1/chat/completions`;
-  if (OPENAI_API_TYPE === 'azure') {
-    url = `${OPENAI_API_HOST}/openai/deployments/${AZURE_DEPLOYMENT_ID}/chat/completions?api-version=${OPENAI_API_VERSION}`;
-  }
+
   const res = await fetch(url, {
     headers: {
       'Content-Type': 'application/json',
-      ...(OPENAI_API_TYPE === 'openai' && {
-        Authorization: `Bearer ${key ? key : process.env.OPENAI_API_KEY}`
-      }),
-      ...(OPENAI_API_TYPE === 'azure' && {
-        'api-key': `${key ? key : process.env.OPENAI_API_KEY}`
-      }),
-      ...((OPENAI_API_TYPE === 'openai' && OPENAI_ORGANIZATION) && {
-        'OpenAI-Organization': OPENAI_ORGANIZATION,
-      }),
+      Authorization: `Bearer ${key ? key : process.env.OPENAI_API_KEY}`
     },
     method: 'POST',
     body: JSON.stringify({
-      ...(OPENAI_API_TYPE === 'openai' && {model: model.id}),
+      model: model.id,
       messages: [
         {
           role: 'system',
