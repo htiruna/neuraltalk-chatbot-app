@@ -53,7 +53,6 @@ export default async function handler(
     });
 
     console.log('response', response);
-    sendData(JSON.stringify({ sourceDocs: response.sourceDocuments }));
   } catch (error) {
     console.log('error', error);
   } finally {
