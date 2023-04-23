@@ -26,4 +26,4 @@ async function initPinecone() {
 
 export const pinecone = await initPinecone();
 export const PINECONE_INDEX_NAME = process.env.PINECONE_INDEX_NAME;
-export const PINECONE_NAME_SPACE = 'curriculum-mgmt';
+export const PINECONE_NAME_SPACE = 'curriculumn-management-py';

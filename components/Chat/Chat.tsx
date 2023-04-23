@@ -85,6 +85,8 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
           history,
         };
 
+        console.log('chatBody', chatBody);
+
         const endpoint = 'api/chat';
         const body = JSON.stringify(chatBody);
 
@@ -310,21 +312,23 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                       </div>
                       <ul className="list-disc list-inside text-[12px] text-black/50 dark:text-white/50 text-sm space-y-2">
                         <li>
+                          What processes are included in curriculum management?
+                        </li>
+                        <li>
+                          How does curriculum management affect student study
+                          plans and enrolment?
+                        </li>
+                        <li>
                           What fields are mandatory when creating a Study
                           Package Availability?
                         </li>
-                        <li>Can a Structure or Template be defined?</li>
                         <li>
-                          How can you determine whether templates can be created
-                          for Curriculums?
+                          What is the purpose of configuring curriculum
+                          structures and templates?
                         </li>
                         <li>
-                          What Categories are defined on the Curriculum Types
-                          screen?
-                        </li>
-                        <li>
-                          How many Curriculum Types are configured per
-                          Curriculum Level?
+                          How can study measures be managed and configured in a
+                          study package?
                         </li>
                       </ul>
                     </div>
