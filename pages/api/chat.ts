@@ -46,9 +46,19 @@ export default async function handler(
 
   sendData(' ');
 
-  //create chain
+  // TODO: temporary hack to solve the rephrased question in answer stream. Update langchainJS version once streaming issue is fixed
+  let hasRephrasedQuestionEnded = false;
   const chain = makeChain(vectorStore, (token: string) => {
-    sendData(token);
+    if (token.includes('?')) {
+      hasRephrasedQuestionEnded = true;
+      sendData('');
+    }
+
+    if (history?.length === 0) {
+      sendData(token);
+    } else if (hasRephrasedQuestionEnded && !token.includes('?')) {
+      sendData(token);
+    }
   });
 
   try {
