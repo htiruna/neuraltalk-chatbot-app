@@ -85,8 +85,6 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
           history,
         };
 
-        console.log('chatBody', chatBody);
-
         const endpoint = 'api/chat';
         const body = JSON.stringify(chatBody);
 
@@ -307,7 +305,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                           Management Configuration and Processing Workbook.
                         </p>
                         <p className="font-bold">
-                          Examples of questions you can ask me:
+                          Examples of questions you can ask me are:
                         </p>
                       </div>
                       <ul className="list-disc list-inside text-[12px] text-black/50 dark:text-white/50 text-sm space-y-2">

@@ -15,7 +15,7 @@
     "@pinecone-database/pinecone": "^0.0.14",
     "@tabler/icons-react": "^2.9.0",
     "eventsource-parser": "^0.1.0",
-    "langchain": "0.0.62",
+    "langchain": "^0.0.62",
     "next": "13.2.4",
     "openai": "^3.2.1",
     "react": "18.2.0",
