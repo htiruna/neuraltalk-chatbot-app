@@ -85,8 +85,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
           chat_history,
         };
 
-        const endpoint =
-          'https://neuraltalk-api-git-staging-harisht09.vercel.app/chat';
+        const endpoint = 'https://neuraltalk-api.vercel.app/chat';
         const body = JSON.stringify(chatBody);
 
         const response = await fetch(endpoint, {
