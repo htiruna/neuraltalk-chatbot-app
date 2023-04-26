@@ -88,13 +88,11 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
         const endpoint = 'api/chat';
         const body = JSON.stringify(chatBody);
 
-        const controller = new AbortController();
         const response = await fetch(endpoint, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          signal: controller.signal,
           body,
         });
         if (!response.ok) {
@@ -103,14 +101,14 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
           toast.error(response.statusText);
           return;
         }
-        const data = response.body;
+        const data = await response.json();
         if (!data) {
           homeDispatch({ field: 'loading', value: false });
           homeDispatch({ field: 'messageIsStreaming', value: false });
           return;
         }
+
         if (updatedConversation.messages.length === 1) {
-          console.log('updatedConversation length equals 1');
           const { content } = message;
           console.log('message content', content);
           const customName =
@@ -122,63 +120,23 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
             name: customName,
           };
         }
-        homeDispatch({ field: 'loading', value: false });
-        const reader = data.getReader();
-        const decoder = new TextDecoder();
-        let done = false;
-        let isFirst = true;
-        let text = '';
-        while (!done) {
-          if (stopConversationRef.current === true) {
-            controller.abort();
-            done = true;
-            break;
-          }
-          const { value, done: doneReading } = await reader.read();
-          console.log('reading', value);
-          done = doneReading;
-          const chunkValue = decoder.decode(value);
-          console.log('chunkValue', chunkValue);
 
-          text += chunkValue;
-          if (isFirst) {
-            console.log('reading first chunk');
-            isFirst = false;
-            const updatedMessages: Message[] = [
-              ...updatedConversation.messages,
-              { role: 'assistant', content: chunkValue },
-            ];
-            updatedConversation = {
-              ...updatedConversation,
-              messages: updatedMessages,
-            };
-            homeDispatch({
-              field: 'selectedConversation',
-              value: updatedConversation,
-            });
-          } else {
-            console.log('reading chunks after first');
-            const updatedMessages: Message[] = updatedConversation.messages.map(
-              (message, index) => {
-                if (index === updatedConversation.messages.length - 1) {
-                  return {
-                    ...message,
-                    content: text,
-                  };
-                }
-                return message;
-              },
-            );
-            updatedConversation = {
-              ...updatedConversation,
-              messages: updatedMessages,
-            };
-            homeDispatch({
-              field: 'selectedConversation',
-              value: updatedConversation,
-            });
-          }
-        }
+        homeDispatch({ field: 'loading', value: false });
+
+        const updatedMessages: Message[] = [
+          ...updatedConversation.messages,
+          // @ts-ignore
+          { role: 'assistant', content: data.text },
+        ];
+        updatedConversation = {
+          ...updatedConversation,
+          messages: updatedMessages,
+        };
+        homeDispatch({
+          field: 'selectedConversation',
+          value: updatedConversation,
+        });
+
         saveConversation(updatedConversation);
         const updatedConversations: Conversation[] = conversations.map(
           (conversation) => {
