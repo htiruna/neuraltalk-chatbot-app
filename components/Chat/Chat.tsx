@@ -70,7 +70,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
         homeDispatch({ field: 'messageIsStreaming', value: true });
 
         const messages = updatedConversation?.messages;
-        const history: string[][] = messages.reduce(
+        const chat_history: string[][] = messages.reduce(
           (acc: string[][], { content }, i) => {
             if (i % 2 === 0 && i < messages.length - 1) {
               acc.push([content, messages[i + 1].content]);
@@ -82,10 +82,10 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
 
         const chatBody = {
           question: message?.content,
-          history,
+          chat_history,
         };
 
-        const endpoint = 'api/chat';
+        const endpoint = 'http://localhost:8000/chat';
         const body = JSON.stringify(chatBody);
 
         const response = await fetch(endpoint, {
@@ -126,7 +126,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
         const updatedMessages: Message[] = [
           ...updatedConversation.messages,
           // @ts-ignore
-          { role: 'assistant', content: data.text },
+          { role: 'assistant', content: data.answer },
         ];
         updatedConversation = {
           ...updatedConversation,
