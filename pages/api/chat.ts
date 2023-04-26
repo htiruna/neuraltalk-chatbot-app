@@ -10,6 +10,10 @@ import { makeChain } from '@/utils/server/makechain';
 import { OpenAIEmbeddings } from 'langchain/embeddings/openai';
 import { PineconeStore } from 'langchain/vectorstores/pinecone';
 
+export const config = {
+  runtime: 'edge',
+};
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
