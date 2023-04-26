@@ -70,7 +70,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
         homeDispatch({ field: 'messageIsStreaming', value: true });
 
         const messages = updatedConversation?.messages;
-        const chat_history: string[][] = messages.reduce(
+        const history: string[][] = messages.reduce(
           (acc: string[][], { content }, i) => {
             if (i % 2 === 0 && i < messages.length - 1) {
               acc.push([content, messages[i + 1].content]);
@@ -82,17 +82,19 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
 
         const chatBody = {
           question: message?.content,
-          chat_history,
+          history,
         };
 
-        const endpoint = 'https://neuraltalk-api.vercel.app/chat';
+        const endpoint = 'api/chat';
         const body = JSON.stringify(chatBody);
 
+        const controller = new AbortController();
         const response = await fetch(endpoint, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
+          signal: controller.signal,
           body,
         });
         if (!response.ok) {
@@ -101,14 +103,14 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
           toast.error(response.statusText);
           return;
         }
-        const data = await response.json();
+        const data = response.body;
         if (!data) {
           homeDispatch({ field: 'loading', value: false });
           homeDispatch({ field: 'messageIsStreaming', value: false });
           return;
         }
-
         if (updatedConversation.messages.length === 1) {
+          console.log('updatedConversation length equals 1');
           const { content } = message;
           console.log('message content', content);
           const customName =
@@ -120,23 +122,63 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
             name: customName,
           };
         }
-
         homeDispatch({ field: 'loading', value: false });
+        const reader = data.getReader();
+        const decoder = new TextDecoder();
+        let done = false;
+        let isFirst = true;
+        let text = '';
+        while (!done) {
+          if (stopConversationRef.current === true) {
+            controller.abort();
+            done = true;
+            break;
+          }
+          const { value, done: doneReading } = await reader.read();
+          console.log('reading', value);
+          done = doneReading;
+          const chunkValue = decoder.decode(value);
+          console.log('chunkValue', chunkValue);
 
-        const updatedMessages: Message[] = [
-          ...updatedConversation.messages,
-          // @ts-ignore
-          { role: 'assistant', content: data.answer },
-        ];
-        updatedConversation = {
-          ...updatedConversation,
-          messages: updatedMessages,
-        };
-        homeDispatch({
-          field: 'selectedConversation',
-          value: updatedConversation,
-        });
-
+          text += chunkValue;
+          if (isFirst) {
+            console.log('reading first chunk');
+            isFirst = false;
+            const updatedMessages: Message[] = [
+              ...updatedConversation.messages,
+              { role: 'assistant', content: chunkValue },
+            ];
+            updatedConversation = {
+              ...updatedConversation,
+              messages: updatedMessages,
+            };
+            homeDispatch({
+              field: 'selectedConversation',
+              value: updatedConversation,
+            });
+          } else {
+            console.log('reading chunks after first');
+            const updatedMessages: Message[] = updatedConversation.messages.map(
+              (message, index) => {
+                if (index === updatedConversation.messages.length - 1) {
+                  return {
+                    ...message,
+                    content: text,
+                  };
+                }
+                return message;
+              },
+            );
+            updatedConversation = {
+              ...updatedConversation,
+              messages: updatedMessages,
+            };
+            homeDispatch({
+              field: 'selectedConversation',
+              value: updatedConversation,
+            });
+          }
+        }
         saveConversation(updatedConversation);
         const updatedConversations: Conversation[] = conversations.map(
           (conversation) => {
