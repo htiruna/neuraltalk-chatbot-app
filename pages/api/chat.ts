@@ -7,8 +7,8 @@ import {
 } from '@/utils/data/pinecone';
 import { makeChain } from '@/utils/server/makechain';
 
-import { OpenAIEmbeddings } from 'langchain/embeddings/openai';
-import { PineconeStore } from 'langchain/vectorstores/pinecone';
+import { OpenAIEmbeddings } from 'langchain/embeddings';
+import { PineconeStore } from 'langchain/vectorstores';
 
 export const config = {
   runtime: 'edge',
