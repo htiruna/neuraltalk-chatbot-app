@@ -10,15 +10,11 @@ import { makeChain } from '@/utils/server/makechain';
 import { OpenAIEmbeddings } from 'langchain/embeddings/openai';
 import { PineconeStore } from 'langchain/vectorstores/pinecone';
 
-export const config = {
-  runtime: 'edge',
-};
-
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  const { question, history } = req.body;
+  const { question, chat_history } = req.body;
 
   if (!question) {
     return res.status(400).json({ message: 'No question in the request' });
@@ -50,26 +46,16 @@ export default async function handler(
 
   sendData(' ');
 
-  // TODO: temporary hack to solve the rephrased question in answer stream. Update langchainJS version once streaming issue is fixed
-  let hasRephrasedQuestionEnded = false;
+  //create chain
   const chain = makeChain(vectorStore, (token: string) => {
-    if (token.includes('?')) {
-      hasRephrasedQuestionEnded = true;
-      sendData('');
-    }
-
-    if (history?.length === 0) {
-      sendData(token);
-    } else if (hasRephrasedQuestionEnded && !token.includes('?')) {
-      sendData(token);
-    }
+    sendData(token);
   });
 
   try {
     //Ask a question
     const response = await chain.call({
       question: sanitizedQuestion,
-      chat_history: history || [],
+      chat_history: chat_history || [],
     });
 
     console.log('response', response);
