@@ -1,44 +1,50 @@
 import { CallbackManager } from 'langchain/callbacks';
-import { ConversationalRetrievalQAChain } from 'langchain/chains';
-import { OpenAI } from 'langchain/llms/openai';
-import { PineconeStore } from 'langchain/vectorstores/pinecone';
+import { ChatVectorDBQAChain, LLMChain, loadQAChain } from 'langchain/chains';
+import { OpenAIChat } from 'langchain/llms';
+import { PromptTemplate } from 'langchain/prompts';
+import { PineconeStore } from 'langchain/vectorstores';
 
-const CONDENSE_PROMPT = `Given the following conversation and a follow up question, rephrase the follow up question to be a standalone question.
+const CONDENSE_PROMPT =
+  PromptTemplate.fromTemplate(`Given the following conversation and a follow up question, rephrase the follow up question to be a standalone question.
 Chat History:
 {chat_history}
 Follow Up Input: {question}
-Standalone question:`;
+Standalone question:`);
 
-const QA_PROMPT = `You are a helpful AI assistant. Use the following pieces of context to answer the question at the end: {context}
-
+const QA_PROMPT =
+  PromptTemplate.fromTemplate(`You are a helpful AI assistant. Use the following pieces of context to answer the question at the end.
+{context}
 Question: {question}
-Helpful answer in markdown:`;
+Helpful answer in markdown:`);
 
 export const makeChain = (
   vectorstore: PineconeStore,
   onTokenStream?: (token: string) => void,
 ) => {
-  const model = new OpenAI({
-    temperature: 1,
-    modelName: 'gpt-3.5-turbo',
-    streaming: Boolean(onTokenStream), // enable streaming
-    callbackManager: onTokenStream
-      ? CallbackManager.fromHandlers({
-          async handleLLMNewToken(token) {
-            onTokenStream(token);
-          },
-        })
-      : undefined,
+  const questionGenerator = new LLMChain({
+    llm: new OpenAIChat({ temperature: 0 }),
+    prompt: CONDENSE_PROMPT,
   });
-
-  const chain = ConversationalRetrievalQAChain.fromLLM(
-    model,
-    vectorstore.asRetriever(),
-    {
-      qaTemplate: QA_PROMPT,
-      questionGeneratorTemplate: CONDENSE_PROMPT,
-      returnSourceDocuments: false,
-    },
+  const docChain = loadQAChain(
+    new OpenAIChat({
+      temperature: 0,
+      modelName: 'gpt-3.5-turbo', //change this to older versions (e.g. gpt-3.5-turbo) if you don't have access to gpt-4
+      streaming: Boolean(onTokenStream),
+      callbackManager: onTokenStream
+        ? CallbackManager.fromHandlers({
+            async handleLLMNewToken(token) {
+              onTokenStream(token);
+            },
+          })
+        : undefined,
+    }),
+    { prompt: QA_PROMPT },
   );
-  return chain;
+
+  return new ChatVectorDBQAChain({
+    vectorstore,
+    combineDocumentsChain: docChain,
+    questionGeneratorChain: questionGenerator,
+    k: 10,
+  });
 };
