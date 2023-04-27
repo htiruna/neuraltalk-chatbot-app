@@ -45,6 +45,6 @@ export const makeChain = (
     vectorstore,
     combineDocumentsChain: docChain,
     questionGeneratorChain: questionGenerator,
-    k: 10,
+    k: 8,
   });
 };
