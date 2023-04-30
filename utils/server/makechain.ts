@@ -1,8 +1,7 @@
 import { CallbackManager } from 'langchain/callbacks';
 import { ChatVectorDBQAChain, LLMChain, loadQAChain } from 'langchain/chains';
-import { OpenAIChat } from 'langchain/llms';
+import { OpenAIChat } from 'langchain/llms/openai';
 import { PromptTemplate } from 'langchain/prompts';
-import { PineconeStore } from 'langchain/vectorstores';
 
 const CONDENSE_PROMPT =
   PromptTemplate.fromTemplate(`Given the following conversation and a follow up question, rephrase the follow up question to be a standalone question.
@@ -18,7 +17,7 @@ Question: {question}
 Helpful answer in markdown:`);
 
 export const makeChain = (
-  vectorstore: PineconeStore,
+  vectorstore: any,
   onTokenStream?: (token: string) => void,
 ) => {
   const questionGenerator = new LLMChain({

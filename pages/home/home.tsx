@@ -1,6 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 
-import { useUser, withPageAuthRequired } from '@auth0/nextjs-auth0/client';
 import Head from 'next/head';
 
 import { useCreateReducer } from '@/hooks/useCreateReducer';
@@ -19,15 +18,16 @@ import { getSettings } from '@/utils/app/settings';
 
 import { Conversation } from '@/types/chat';
 import { KeyValuePair } from '@/types/data';
+import { HomeInitialState } from '@/types/home';
 
 import { Chat } from '@/components/Chat/Chat';
 import { Chatbar } from '@/components/Chatbar/Chatbar';
-import { Navbar } from '@/components/Mobile/Navbar';
 import Loading from '@/components/Loading';
+import { Navbar } from '@/components/Mobile/Navbar';
 
-import { v4 as uuidv4 } from 'uuid';
-import { HomeInitialState } from '@/types/home';
 import HomeContext from '@/contexts/home.context';
+import { useUser, withPageAuthRequired } from '@auth0/nextjs-auth0/client';
+import { v4 as uuidv4 } from 'uuid';
 
 const initialState: HomeInitialState = {
   loading: false,
@@ -39,7 +39,7 @@ const initialState: HomeInitialState = {
   temperature: 1,
   showChatbar: true,
   messageError: false,
-  searchTerm: ''
+  searchTerm: '',
 };
 
 const Home = () => {
@@ -48,11 +48,7 @@ const Home = () => {
   });
 
   const {
-    state: {
-      lightMode,
-      conversations,
-      selectedConversation,
-    },
+    state: { lightMode, conversations, selectedConversation },
     dispatch,
   } = contextValue;
 
@@ -173,9 +169,7 @@ const Home = () => {
         },
       });
     }
-  }, [
-    dispatch
-  ]);
+  }, [dispatch]);
 
   return (
     <HomeContext.Provider
@@ -219,7 +213,4 @@ const Home = () => {
   );
 };
 
-export default withPageAuthRequired(Home, {
-  onRedirecting: () => <Loading />,
-  onError: error => <div>{error.message}</div>
-});
+export default Home;
