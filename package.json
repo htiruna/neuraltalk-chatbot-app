@@ -16,7 +16,7 @@
     "@supabase/supabase-js": "^2.21.0",
     "@tabler/icons-react": "^2.9.0",
     "eventsource-parser": "^0.1.0",
-    "langchain": "^0.0.66",
+    "langchain": "^0.0.71",
     "next": "13.2.4",
     "openai": "^3.2.1",
     "react": "18.2.0",

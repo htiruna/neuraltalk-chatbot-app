@@ -2,21 +2,21 @@ import { makeChain } from './makechain';
 
 import { createClient } from '@supabase/supabase-js';
 import { OpenAIEmbeddings } from 'langchain/embeddings/openai';
-import { SupabaseHybridSearch } from 'langchain/retrievers/supabase';
+import { SupabaseVectorStore } from 'langchain/vectorstores/supabase';
 
 export const OpenAIStream = async (
   question: string,
   chat_history: string[][],
 ) => {
   const client = createClient(
-    process.env.SUPABASE_URL ?? '',
-    process.env.SUPABASE_KEY ?? '',
+    process.env.NEXT_PUBLIC_SUPABASE_URL ?? '',
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? '',
   );
-  if (!process.env.SUPABASE_URL) {
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
     throw new Error('Missing SUPABASE_URL');
   }
 
-  if (!process.env.SUPABASE_KEY) {
+  if (!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
     throw new Error('Missing SUPABASE_KEY');
   }
 
@@ -26,15 +26,7 @@ export const OpenAIStream = async (
     async start(controller) {
       const embeddings = new OpenAIEmbeddings();
 
-      const retriever = new SupabaseHybridSearch(embeddings, {
-        client,
-        //  Below are the defaults, expecting that you set up your supabase table and functions according to the guide above. Please change if necessary.
-        similarityK: 8,
-        keywordK: 8,
-        tableName: 'documents',
-        similarityQueryName: 'match_documents',
-        keywordQueryName: 'kw_match_documents',
-      });
+      const vectorStore = new SupabaseVectorStore(embeddings, { client });
 
       const encoder = new TextEncoder();
 
@@ -45,7 +37,7 @@ export const OpenAIStream = async (
       sendData(' ');
 
       // create chain
-      const chain = makeChain(retriever, (token: string) => {
+      const chain = makeChain(vectorStore, (token: string) => {
         sendData(token);
       });
 

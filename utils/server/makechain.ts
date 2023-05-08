@@ -1,7 +1,12 @@
 import { CallbackManager } from 'langchain/callbacks';
-import { ChatVectorDBQAChain, LLMChain, loadQAChain } from 'langchain/chains';
+import {
+  ConversationalRetrievalQAChain,
+  LLMChain,
+  loadQAStuffChain,
+} from 'langchain/chains';
 import { OpenAIChat } from 'langchain/llms/openai';
 import { PromptTemplate } from 'langchain/prompts';
+import { SupabaseVectorStore } from 'langchain/vectorstores/supabase';
 
 const CONDENSE_PROMPT =
   PromptTemplate.fromTemplate(`Given the following conversation and a follow up question, rephrase the follow up question to be a standalone question.
@@ -17,14 +22,15 @@ Question: {question}
 Helpful answer:`);
 
 export const makeChain = (
-  vectorstore: any,
+  vectorStore: SupabaseVectorStore,
   onTokenStream?: (token: string) => void,
 ) => {
   const questionGenerator = new LLMChain({
     llm: new OpenAIChat({ temperature: 0 }),
     prompt: CONDENSE_PROMPT,
   });
-  const docChain = loadQAChain(
+
+  const docChain = loadQAStuffChain(
     new OpenAIChat({
       temperature: 0,
       modelName: 'gpt-3.5-turbo', //change this to older versions (e.g. gpt-3.5-turbo) if you don't have access to gpt-4
@@ -40,8 +46,10 @@ export const makeChain = (
     { prompt: QA_PROMPT },
   );
 
-  return new ChatVectorDBQAChain({
-    vectorstore,
+  vectorStore.filter = { source: '../pdfs/psychedelic-research.pdf' };
+
+  return new ConversationalRetrievalQAChain({
+    retriever: vectorStore.asRetriever(8),
     combineDocumentsChain: docChain,
     questionGeneratorChain: questionGenerator,
   });
