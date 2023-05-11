@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 
 import Head from 'next/head';
+import { useRouter } from 'next/router';
 
 import { useCreateReducer } from '@/hooks/useCreateReducer';
 
@@ -43,6 +44,9 @@ const initialState: HomeInitialState = {
 };
 
 const Chatbot = () => {
+  const router = useRouter();
+  const { namespace } = router.query;
+
   const contextValue = useCreateReducer<HomeInitialState>({
     initialState,
   });
@@ -189,6 +193,7 @@ const Chatbot = () => {
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>
+      Namespace: {namespace}
       {selectedConversation && (
         <main
           className={`flex h-screen w-screen flex-col text-sm text-white dark:text-white ${lightMode}`}

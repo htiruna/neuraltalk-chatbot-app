@@ -40,7 +40,11 @@ const Home = ({ user }: any) => {
       <ul>
         {chatbots.map((chatbot) => (
           <li key={chatbot.id}>
-            <h3>{chatbot.namespace}</h3>
+            <h3>
+              <Link href={`/chatbot/${chatbot.namespace}`} target="_blank">
+                {chatbot.name}
+              </Link>
+            </h3>
             <p>{chatbot.description}</p>
           </li>
         ))}
