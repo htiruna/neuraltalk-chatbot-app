@@ -85,7 +85,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
           chat_history,
         };
 
-        const endpoint = 'api/chat-edge';
+        const endpoint = 'api/chat';
         const body = JSON.stringify(chatBody);
 
         const controller = new AbortController();
