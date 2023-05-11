@@ -66,3 +66,49 @@ export const insertUser = async (userData: UserData, accessToken: string) => {
 
   return newUser;
 };
+
+export const getChatbotsForUser = async (
+  auth0_id: string,
+  accessToken: string,
+) => {
+  const supabase = supabaseClient(accessToken);
+
+  // Get user role and id
+  const { data: user, error: userError } = await supabase
+    .from('users')
+    .select('role, id')
+    .eq('auth0_id', auth0_id)
+    .single();
+
+  if (userError) {
+    console.error('Error fetching user role:', userError);
+    return { error: userError };
+  }
+
+  // If user is admin, return all chatbots
+  if (user?.role === 'admin') {
+    const { data: chatbots, error: chatbotsError } = await supabase
+      .from('chatbots')
+      .select('*');
+
+    if (chatbotsError) {
+      console.error('Error fetching all chatbots:', chatbotsError);
+      return { error: chatbotsError };
+    }
+
+    return chatbots;
+  }
+
+  // If user is not admin, return only their chatbots
+  const { data: chatbots, error: chatbotsError } = await supabase
+    .from('user_chatbots')
+    .select('chatbots(*)')
+    .eq('user_id', user.id);
+
+  if (chatbotsError) {
+    console.error('Error fetching user chatbots:', chatbotsError);
+    return { error: chatbotsError };
+  }
+
+  return chatbots.map((chatbot) => chatbot.chatbots);
+};
