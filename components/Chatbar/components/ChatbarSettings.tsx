@@ -1,4 +1,4 @@
-import { IconLogout } from '@tabler/icons-react';
+import { IconArrowLeft } from '@tabler/icons-react';
 import { useContext } from 'react';
 
 import { useRouter } from 'next/router';
@@ -26,10 +26,10 @@ export const ChatbarSettings = () => {
       ) : null}
 
       <SidebarButton
-        text={'Logout'}
-        icon={<IconLogout size={18} />}
+        text={'Back to dashboard'}
+        icon={<IconArrowLeft size={18} />}
         onClick={() => {
-          router.push('/api/auth/logout');
+          router.push('/');
         }}
       />
     </div>

@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import Head from 'next/head';
 import { useRouter } from 'next/router';
@@ -16,6 +16,7 @@ import {
   updateConversation,
 } from '@/utils/app/conversation';
 import { getSettings } from '@/utils/app/settings';
+import { getChatbotById } from '@/utils/data/supabase';
 
 import { Conversation } from '@/types/chat';
 import { KeyValuePair } from '@/types/data';
@@ -27,7 +28,7 @@ import Loading from '@/components/Loading';
 import { Navbar } from '@/components/Mobile/Navbar';
 
 import HomeContext from '@/contexts/home.context';
-import { useUser, withPageAuthRequired } from '@auth0/nextjs-auth0/client';
+import { useUser } from '@auth0/nextjs-auth0/client';
 import { v4 as uuidv4 } from 'uuid';
 
 const initialState: HomeInitialState = {
@@ -45,7 +46,11 @@ const initialState: HomeInitialState = {
 
 const Chatbot = () => {
   const router = useRouter();
-  const { namespace } = router.query;
+  const { id } = router.query;
+
+  const { user, error: authError, isLoading } = useUser();
+
+  const [chatbot, setChatbot] = useState(null);
 
   const contextValue = useCreateReducer<HomeInitialState>({
     initialState,
@@ -116,6 +121,22 @@ const Chatbot = () => {
       dispatch({ field: 'showChatbar', value: false });
     }
   }, [selectedConversation]);
+
+  useEffect(() => {
+    if (id) {
+      const fetchChatbot = async () => {
+        // @ts-ignore
+        const result = await getChatbotById(id, user?.token);
+        if (result.error) {
+          console.error('Error fetching chatbot:', result.error);
+        } else {
+          // @ts-ignore
+          setChatbot(result);
+        }
+      };
+      fetchChatbot();
+    }
+  }, [id, user]);
 
   // ON LOAD --------------------------------------------
 
@@ -193,7 +214,6 @@ const Chatbot = () => {
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      Namespace: {namespace}
       {selectedConversation && (
         <main
           className={`flex h-screen w-screen flex-col text-sm text-white dark:text-white ${lightMode}`}

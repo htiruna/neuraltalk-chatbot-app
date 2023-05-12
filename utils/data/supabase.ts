@@ -112,3 +112,20 @@ export const getChatbotsForUser = async (
 
   return chatbots.map((chatbot) => chatbot.chatbots);
 };
+
+export const getChatbotById = async (id: string, accessToken: string) => {
+  const supabase = supabaseClient(accessToken);
+
+  const { data: chatbot, error } = await supabase
+    .from('chatbots')
+    .select('*')
+    .eq('id', id)
+    .single();
+
+  if (error) {
+    console.error('Error fetching chatbot:', error);
+    return { error };
+  }
+
+  return chatbot;
+};

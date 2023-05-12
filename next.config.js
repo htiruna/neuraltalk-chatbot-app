@@ -8,8 +8,6 @@ const nextConfig = {
       layers: true,
       topLevelAwait: true,
     };
-    config.externals = [...config.externals, 'pinecone-client'];
-
     return config;
   },
 };
