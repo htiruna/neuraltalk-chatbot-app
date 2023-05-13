@@ -53,8 +53,8 @@ export const Chatbar = ({ chatbot }: Props) => {
 
     homeDispatch({ field: 'conversations', value: [] });
 
-    localStorage.removeItem('conversationHistory');
-    localStorage.removeItem('selectedConversation');
+    localStorage.removeItem(`conversationHistory:${chatbot?.namespace}`);
+    localStorage.removeItem(`selectedConversation:${chatbot?.namespace}`);
   };
 
   const handleDeleteConversation = (conversation: Conversation) => {
@@ -88,7 +88,7 @@ export const Chatbar = ({ chatbot }: Props) => {
           folderId: null,
         },
       });
-      localStorage.removeItem('selectedConversation');
+      localStorage.removeItem(`selectedConversation:${chatbot?.namespace}`);
     }
   };
 
