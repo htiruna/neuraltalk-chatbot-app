@@ -273,10 +273,11 @@ export const Chat = memo(({ chatbot, stopConversationRef }: Props) => {
     };
   }, [messagesEndRef]);
 
-  const stats = [
-    { name: '"What is X?"' },
-    { name: '"What is Y?"' },
-    { name: '"What is Z?"' },
+  const questions = [
+    '"How do I warm up a group?"',
+    '"What are facilitation phrases?"',
+    '"What are some ethical considerations that facilitators should keep in mind?"',
+    '"What is the purpose of facilitation and why is it important to be clear about it?"',
   ];
 
   return (
@@ -295,10 +296,30 @@ export const Chat = memo(({ chatbot, stopConversationRef }: Props) => {
                     <h2 className="text-3xl font-bold tracking-tight text-black sm:text-4xl">
                       {chatbot?.name}
                     </h2>
-                    <p className="mt-3 text-xl text-black">
-                      Hi there! I'm a chatbot trained on {chatbot?.name}.{' '}
-                      {chatbot?.description}.
+                    <p className="mt-8 text-black">
+                      Hi there, I'm a chatbot trained on {chatbot?.name}. Here
+                      are some examples of questions you can me:
                     </p>
+                  </div>
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    {questions.map((question, i) => (
+                      <div
+                        key={i}
+                        className="relative flex items-center space-x-3 rounded-lg border border-gray-300 bg-white px-6 py-10 shadow-sm focus-within:ring-2 focus-within:ring-indigo-500 focus-within:ring-offset-2 hover:border-gray-400"
+                      >
+                        <div className="min-w-0 flex-1 text-center">
+                          <a href="#" className="focus:outline-none">
+                            <span
+                              className="absolute inset-0"
+                              aria-hidden="true"
+                            />
+                            <p className="text-sm font-medium text-gray-900">
+                              {question}
+                            </p>
+                          </a>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
               </>
