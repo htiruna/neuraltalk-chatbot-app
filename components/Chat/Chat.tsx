@@ -298,7 +298,7 @@ export const Chat = memo(({ chatbot, stopConversationRef }: Props) => {
                     </h2>
                     <p className="mt-8 text-black">
                       Hi there, I'm a chatbot trained on {chatbot?.name}. Here
-                      are some examples of questions you can me:
+                      are some examples of questions you can ask me:
                     </p>
                   </div>
                   <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
