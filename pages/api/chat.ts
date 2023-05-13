@@ -6,12 +6,13 @@ export const config = {
 
 const handler = async (req: Request): Promise<Response> => {
   try {
-    const { question, chat_history } = (await req.json()) as {
+    const { question, chat_history, namespace } = (await req.json()) as {
       question: string;
       chat_history: string[][];
+      namespace: string;
     };
 
-    const stream = await OpenAIStream(question, chat_history);
+    const stream = await OpenAIStream(question, chat_history, namespace);
 
     return new Response(stream);
   } catch (error) {

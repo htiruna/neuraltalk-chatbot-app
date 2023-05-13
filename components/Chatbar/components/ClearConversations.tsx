@@ -1,8 +1,6 @@
 import { IconCheck, IconTrash, IconX } from '@tabler/icons-react';
 import { FC, useState } from 'react';
 
-
-
 import { SidebarButton } from '@/components/Sidebar/SidebarButton';
 
 interface Props {
@@ -19,9 +17,9 @@ export const ClearConversations: FC<Props> = ({ onClearConversations }) => {
 
   return isConfirming ? (
     <div className="flex w-full cursor-pointer items-center rounded-lg py-3 px-3 hover:bg-gray-500/10">
-      <IconTrash size={18} />
+      <IconTrash className="text-black" size={18} />
 
-      <div className="ml-3 flex-1 text-left text-[12.5px] leading-3 text-white">
+      <div className="ml-3 flex-1 text-left text-[12.5px] leading-3 text-black">
         {'Are you sure?'}
       </div>
 

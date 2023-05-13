@@ -18,7 +18,7 @@ import {
 import { getSettings } from '@/utils/app/settings';
 import { getChatbotById } from '@/utils/data/supabase';
 
-import { Conversation } from '@/types/chat';
+import { ChatBot, Conversation } from '@/types/chat';
 import { KeyValuePair } from '@/types/data';
 import { HomeInitialState } from '@/types/home';
 
@@ -50,7 +50,8 @@ const Chatbot = () => {
 
   const { user, error: authError, isLoading } = useUser();
 
-  const [chatbot, setChatbot] = useState(null);
+  // @ts-ignore
+  const [chatbot, setChatbot] = useState<ChatBot>(null);
 
   const contextValue = useCreateReducer<HomeInitialState>({
     initialState,
@@ -69,7 +70,7 @@ const Chatbot = () => {
       value: conversation,
     });
 
-    saveConversation(conversation);
+    saveConversation(conversation, chatbot?.namespace);
   };
 
   // CONVERSATION OPERATIONS  --------------------------------------------
@@ -90,8 +91,8 @@ const Chatbot = () => {
     dispatch({ field: 'selectedConversation', value: newConversation });
     dispatch({ field: 'conversations', value: updatedConversations });
 
-    saveConversation(newConversation);
-    saveConversations(updatedConversations);
+    saveConversation(newConversation, chatbot?.namespace);
+    saveConversations(updatedConversations, chatbot?.namespace);
 
     dispatch({ field: 'loading', value: false });
   };
@@ -108,6 +109,7 @@ const Chatbot = () => {
     const { single, all } = updateConversation(
       updatedConversation,
       conversations,
+      chatbot?.namespace,
     );
 
     dispatch({ field: 'selectedConversation', value: single });
@@ -131,7 +133,7 @@ const Chatbot = () => {
           console.error('Error fetching chatbot:', result.error);
         } else {
           // @ts-ignore
-          setChatbot(result);
+          setChatbot(result as ChatBot);
         }
       };
       fetchChatbot();
@@ -158,7 +160,9 @@ const Chatbot = () => {
       dispatch({ field: 'showChatbar', value: showChatbar === 'true' });
     }
 
-    const conversationHistory = localStorage.getItem('conversationHistory');
+    const conversationHistory = localStorage.getItem(
+      `conversationHistory:${chatbot?.namespace}`,
+    );
     if (conversationHistory) {
       const parsedConversationHistory: Conversation[] =
         JSON.parse(conversationHistory);
@@ -169,7 +173,9 @@ const Chatbot = () => {
       dispatch({ field: 'conversations', value: cleanedConversationHistory });
     }
 
-    const selectedConversation = localStorage.getItem('selectedConversation');
+    const selectedConversation = localStorage.getItem(
+      `selectedConversation:${chatbot?.namespace}`,
+    );
     if (selectedConversation) {
       const parsedSelectedConversation: Conversation =
         JSON.parse(selectedConversation);
@@ -194,7 +200,7 @@ const Chatbot = () => {
         },
       });
     }
-  }, [dispatch]);
+  }, [dispatch, chatbot]);
 
   return (
     <HomeContext.Provider
@@ -226,10 +232,13 @@ const Chatbot = () => {
           </div>
 
           <div className="flex h-full w-full pt-[48px] sm:pt-0">
-            <Chatbar />
+            <Chatbar chatbot={chatbot} />
 
             <div className="flex flex-1">
-              <Chat stopConversationRef={stopConversationRef} />
+              <Chat
+                chatbot={chatbot}
+                stopConversationRef={stopConversationRef}
+              />
             </div>
           </div>
         </main>

@@ -7,6 +7,7 @@ import { SupabaseVectorStore } from 'langchain/vectorstores/supabase';
 export const OpenAIStream = async (
   question: string,
   chat_history: string[][],
+  namespace: string,
 ) => {
   const client = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL ?? '',
@@ -37,9 +38,13 @@ export const OpenAIStream = async (
       sendData(' ');
 
       // create chain
-      const chain = makeChain(vectorStore, (token: string) => {
-        sendData(token);
-      });
+      const chain = makeChain(
+        vectorStore,
+        (token: string) => {
+          sendData(token);
+        },
+        namespace,
+      );
 
       try {
         // Ask a question

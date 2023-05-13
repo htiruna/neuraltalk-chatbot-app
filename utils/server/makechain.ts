@@ -24,6 +24,7 @@ Helpful answer:`);
 export const makeChain = (
   vectorStore: SupabaseVectorStore,
   onTokenStream?: (token: string) => void,
+  namespace?: string,
 ) => {
   const questionGenerator = new LLMChain({
     llm: new OpenAIChat({ temperature: 0 }),
@@ -46,10 +47,12 @@ export const makeChain = (
     { prompt: QA_PROMPT },
   );
 
-  vectorStore.filter = { source: '../pdfs/psychedelic-research.pdf' };
+  if (namespace) {
+    vectorStore.filter = { namespace };
+  }
 
   return new ConversationalRetrievalQAChain({
-    retriever: vectorStore.asRetriever(8),
+    retriever: vectorStore.asRetriever(2),
     combineDocumentsChain: docChain,
     questionGeneratorChain: questionGenerator,
   });

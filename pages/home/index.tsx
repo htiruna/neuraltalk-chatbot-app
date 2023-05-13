@@ -13,7 +13,7 @@ import { withPageAuthRequired } from '@auth0/nextjs-auth0/client';
 
 const navigation = [{ name: 'Dashboard', href: '#', current: true }];
 
-const userNavigation = [{ name: 'Sign out', href: '/api/auth/logout' }];
+const userNavigation = [{ name: 'Log out', href: '/api/auth/logout' }];
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');

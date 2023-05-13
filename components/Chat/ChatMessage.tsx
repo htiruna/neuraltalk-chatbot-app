@@ -24,10 +24,11 @@ export interface Props {
   message: Message;
   messageIndex: number;
   onEdit?: (editedMessage: Message) => void;
+  namespace: string;
 }
 
 export const ChatMessage: FC<Props> = memo(
-  ({ message, messageIndex, onEdit }) => {
+  ({ message, messageIndex, onEdit, namespace }) => {
     const {
       state: {
         selectedConversation,
@@ -92,6 +93,7 @@ export const ChatMessage: FC<Props> = memo(
       const { single, all } = updateConversation(
         updatedConversation,
         conversations,
+        namespace,
       );
       homeDispatch({ field: 'selectedConversation', value: single });
       homeDispatch({ field: 'conversations', value: all });
