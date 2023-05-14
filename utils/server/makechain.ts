@@ -14,7 +14,7 @@ const QA_PROMPT =
   PromptTemplate.fromTemplate(`You are a helpful AI assistant. Use the following pieces of context to answer the question at the end.
 {context}
 Question: {question}
-Helpful answer in markdown:`);
+Helpful answer:`);
 
 export const makeChain = (
   vectorstore: any,
@@ -44,6 +44,5 @@ export const makeChain = (
     vectorstore,
     combineDocumentsChain: docChain,
     questionGeneratorChain: questionGenerator,
-    k: 10,
   });
 };
