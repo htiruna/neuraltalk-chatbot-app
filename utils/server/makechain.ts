@@ -52,7 +52,7 @@ export const makeChain = (
   }
 
   return new ConversationalRetrievalQAChain({
-    retriever: vectorStore.asRetriever(2),
+    retriever: vectorStore.asRetriever(),
     combineDocumentsChain: docChain,
     questionGeneratorChain: questionGenerator,
   });
