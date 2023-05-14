@@ -8,6 +8,7 @@ import { useRouter } from 'next/router';
 
 import { getChatbotsForUser } from '@/utils/data/supabase';
 
+import ChatbotGrid from '@/components/ChatbotGrid/ChatbotGrid';
 import Loading from '@/components/Loading';
 import UploadModal from '@/components/UploadModal';
 
@@ -58,13 +59,13 @@ const Home = ({ user }: any) => {
                   <div className="flex">
                     <div className="flex flex-shrink-0 items-center">
                       <Image
-                        className="block h-8 w-auto lg:hidden"
+                        className="block h-10 w-auto lg:hidden"
                         src="/navbar-logo.png"
                         width={100}
                         height={100}
                       />
                       <Image
-                        className="hidden h-8 w-auto lg:block"
+                        className="hidden h-10 w-auto lg:block"
                         src="/navbar-logo.png"
                         width={100}
                         height={100}
@@ -167,23 +168,6 @@ const Home = ({ user }: any) => {
                   ))}
                 </div>
                 <div className="border-t border-gray-200 pb-3 pt-4">
-                  <div className="flex items-center px-4">
-                    <div className="flex-shrink-0">
-                      <img
-                        className="h-10 w-10 rounded-full"
-                        src={user.imageUrl}
-                        alt=""
-                      />
-                    </div>
-                    <div className="ml-3">
-                      <div className="text-base font-medium text-gray-800">
-                        {user.name}
-                      </div>
-                      <div className="text-sm font-medium text-gray-500">
-                        {user.email}
-                      </div>
-                    </div>
-                  </div>
                   <div className="mt-3 space-y-1">
                     {userNavigation.map((item) => (
                       <Disclosure.Button
@@ -221,61 +205,7 @@ const Home = ({ user }: any) => {
                 </div>
               </div>
               <div className="mt-8 flow-root">
-                <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-                  <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-                    <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
-                      <table className="min-w-full divide-y divide-gray-300">
-                        <thead className="bg-gray-50">
-                          <tr>
-                            <th
-                              scope="col"
-                              className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6"
-                            >
-                              Name
-                            </th>
-                            <th
-                              scope="col"
-                              className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
-                            >
-                              Description
-                            </th>
-                            <th
-                              scope="col"
-                              className="relative py-3.5 pl-3 pr-4 sm:pr-6"
-                            >
-                              <span className="sr-only">Edit</span>
-                            </th>
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y divide-gray-200 bg-white">
-                          {chatbots.map((chatbot) => (
-                            <tr key={chatbot.id}>
-                              <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
-                                {chatbot.name}
-                              </td>
-                              <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 overflow-hidden">
-                                <div className="w-[48rem] truncate">
-                                  {chatbot.description}
-                                </div>
-                              </td>
-                              <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
-                                <button
-                                  type="button"
-                                  className="inline-flex items-center rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-white"
-                                  onClick={() => {
-                                    router.push(`/chatbot?id=${chatbot.id}`);
-                                  }}
-                                >
-                                  Open
-                                </button>
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                </div>
+                <ChatbotGrid chatbots={chatbots} />
               </div>
             </div>
           </div>
