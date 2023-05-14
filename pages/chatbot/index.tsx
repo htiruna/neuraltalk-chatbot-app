@@ -128,7 +128,7 @@ const Chatbot = () => {
     if (id) {
       const fetchChatbot = async () => {
         // @ts-ignore
-        const result = await getChatbotById(id, user?.token);
+        const result = await getChatbotById(id, user?.sub);
         if (result.error) {
           console.error('Error fetching chatbot:', result.error);
         } else {

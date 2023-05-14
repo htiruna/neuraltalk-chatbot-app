@@ -30,7 +30,7 @@ const Home = ({ user }: any) => {
 
   useEffect(() => {
     const fetchChatbots = async () => {
-      const result = await getChatbotsForUser(user.sub, user.token);
+      const result = await getChatbotsForUser(user.sub);
       if (result.error) {
         console.error('Error fetching chatbots:', result.error);
       } else {

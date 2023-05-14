@@ -13,16 +13,8 @@ interface UserData {
   email: string;
 }
 
-export const supabaseClient = (access_token?: string): SupabaseClient => {
+export const supabaseClient = (): SupabaseClient => {
   const options: Options = {};
-
-  if (access_token) {
-    options.global = {
-      headers: {
-        Authorization: `Bearer ${access_token}`,
-      },
-    };
-  }
 
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL as string,
@@ -33,8 +25,8 @@ export const supabaseClient = (access_token?: string): SupabaseClient => {
   return supabase;
 };
 
-export const insertUser = async (userData: UserData, accessToken: string) => {
-  const supabase = supabaseClient(accessToken);
+export const insertUser = async (userData: UserData) => {
+  const supabase = supabaseClient();
   const { userId: auth0_id, email } = userData;
 
   // Check if user already exists
@@ -67,11 +59,8 @@ export const insertUser = async (userData: UserData, accessToken: string) => {
   return newUser;
 };
 
-export const getChatbotsForUser = async (
-  auth0_id: string,
-  accessToken: string,
-) => {
-  const supabase = supabaseClient(accessToken);
+export const getChatbotsForUser = async (auth0_id: string) => {
+  const supabase = supabaseClient();
 
   // Get user role and id
   const { data: user, error: userError } = await supabase
@@ -113,8 +102,9 @@ export const getChatbotsForUser = async (
   return chatbots.map((chatbot) => chatbot.chatbots);
 };
 
-export const getChatbotById = async (id: string, accessToken: string) => {
-  const supabase = supabaseClient(accessToken);
+// TODO: check that user can access this chatbot
+export const getChatbotById = async (id: string, userId: string) => {
+  const supabase = supabaseClient();
 
   const { data: chatbot, error } = await supabase
     .from('chatbots')
