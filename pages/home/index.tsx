@@ -1,13 +1,15 @@
 // @ts-nocheck
 import { Disclosure, Menu, Transition } from '@headlessui/react';
-import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 import React, { Fragment, useEffect, useState } from 'react';
 
+import Image from 'next/image';
 import { useRouter } from 'next/router';
 
 import { getChatbotsForUser } from '@/utils/data/supabase';
 
 import Loading from '@/components/Loading';
+import UploadModal from '@/components/UploadModal';
 
 import { withPageAuthRequired } from '@auth0/nextjs-auth0/client';
 
@@ -22,6 +24,8 @@ function classNames(...classes) {
 const Home = ({ user }: any) => {
   const [chatbots, setChatbots] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showUploadModal, setShowUploadModal] = useState(false);
+
   const router = useRouter();
 
   useEffect(() => {
@@ -44,6 +48,7 @@ const Home = ({ user }: any) => {
 
   return (
     <>
+      <UploadModal open={showUploadModal} setOpen={setShowUploadModal} />
       <div className="min-h-full">
         <Disclosure as="nav" className="bg-white shadow-sm">
           {({ open }) => (
@@ -52,15 +57,17 @@ const Home = ({ user }: any) => {
                 <div className="flex h-16 justify-between">
                   <div className="flex">
                     <div className="flex flex-shrink-0 items-center">
-                      <img
+                      <Image
                         className="block h-8 w-auto lg:hidden"
-                        src="https://tailwindui.com/img/logos/mark.svg?color=amber&shade=600"
-                        alt="Your Company"
+                        src="/navbar-logo.png"
+                        width={100}
+                        height={100}
                       />
-                      <img
+                      <Image
                         className="hidden h-8 w-auto lg:block"
-                        src="https://tailwindui.com/img/logos/mark.svg?color=amber&shade=600"
-                        alt="Your Company"
+                        src="/navbar-logo.png"
+                        width={100}
+                        height={100}
                       />
                     </div>
                     <div className="hidden sm:-my-px sm:ml-6 sm:flex sm:space-x-8">
@@ -85,15 +92,12 @@ const Home = ({ user }: any) => {
                     {/* Profile dropdown */}
                     <Menu as="div" className="relative ml-3">
                       <div>
-                        <Menu.Button className="flex rounded-full bg-white text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2">
+                        <Menu.Button className="flex items-center justify-center rounded-full bg-amber-600 text-white text-sm focus:outline-none focus:ring-2 focus:ring-amber-600 focus:ring-offset-2 h-8 w-8">
                           <span className="sr-only">Open user menu</span>
-                          <img
-                            className="h-8 w-8 rounded-full"
-                            src={user.imageUrl}
-                            alt=""
-                          />
+                          <span>{user?.name?.[0]?.toUpperCase()}</span>
                         </Menu.Button>
                       </div>
+
                       <Transition
                         as={Fragment}
                         enter="transition ease-out duration-200"
@@ -179,13 +183,6 @@ const Home = ({ user }: any) => {
                         {user.email}
                       </div>
                     </div>
-                    <button
-                      type="button"
-                      className="ml-auto flex-shrink-0 rounded-full bg-white p-1 text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2"
-                    >
-                      <span className="sr-only">View notifications</span>
-                      <BellIcon className="h-6 w-6" aria-hidden="true" />
-                    </button>
                   </div>
                   <div className="mt-3 space-y-1">
                     {userNavigation.map((item) => (
@@ -217,6 +214,7 @@ const Home = ({ user }: any) => {
                   <button
                     type="button"
                     className="block rounded-md bg-amber-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-amber-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-600"
+                    onClick={() => setShowUploadModal(true)}
                   >
                     Create chatbot
                   </button>
