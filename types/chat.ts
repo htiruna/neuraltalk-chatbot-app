@@ -19,3 +19,10 @@ export interface Conversation {
   prompt: string;
   temperature: number;
 }
+
+export interface ChatBot {
+  id: string;
+  name: string;
+  namespace: string;
+  description: string;
+}

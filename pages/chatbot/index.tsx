@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 
-import { useUser, withPageAuthRequired } from '@auth0/nextjs-auth0/client';
 import Head from 'next/head';
+import { useRouter } from 'next/router';
 
 import { useCreateReducer } from '@/hooks/useCreateReducer';
 
@@ -16,18 +16,20 @@ import {
   updateConversation,
 } from '@/utils/app/conversation';
 import { getSettings } from '@/utils/app/settings';
+import { getChatbotById } from '@/utils/data/supabase';
 
-import { Conversation } from '@/types/chat';
+import { ChatBot, Conversation } from '@/types/chat';
 import { KeyValuePair } from '@/types/data';
+import { HomeInitialState } from '@/types/home';
 
 import { Chat } from '@/components/Chat/Chat';
 import { Chatbar } from '@/components/Chatbar/Chatbar';
-import { Navbar } from '@/components/Mobile/Navbar';
 import Loading from '@/components/Loading';
+import { Navbar } from '@/components/Mobile/Navbar';
 
-import { v4 as uuidv4 } from 'uuid';
-import { HomeInitialState } from '@/types/home';
 import HomeContext from '@/contexts/home.context';
+import { useUser } from '@auth0/nextjs-auth0/client';
+import { v4 as uuidv4 } from 'uuid';
 
 const initialState: HomeInitialState = {
   loading: false,
@@ -39,20 +41,24 @@ const initialState: HomeInitialState = {
   temperature: 1,
   showChatbar: true,
   messageError: false,
-  searchTerm: ''
+  searchTerm: '',
 };
 
-const Home = () => {
+const Chatbot = () => {
+  const router = useRouter();
+  const { id } = router.query;
+
+  const { user, error: authError, isLoading } = useUser();
+
+  // @ts-ignore
+  const [chatbot, setChatbot] = useState<ChatBot>(null);
+
   const contextValue = useCreateReducer<HomeInitialState>({
     initialState,
   });
 
   const {
-    state: {
-      lightMode,
-      conversations,
-      selectedConversation,
-    },
+    state: { lightMode, conversations, selectedConversation },
     dispatch,
   } = contextValue;
 
@@ -64,7 +70,7 @@ const Home = () => {
       value: conversation,
     });
 
-    saveConversation(conversation);
+    saveConversation(conversation, chatbot?.namespace);
   };
 
   // CONVERSATION OPERATIONS  --------------------------------------------
@@ -85,8 +91,8 @@ const Home = () => {
     dispatch({ field: 'selectedConversation', value: newConversation });
     dispatch({ field: 'conversations', value: updatedConversations });
 
-    saveConversation(newConversation);
-    saveConversations(updatedConversations);
+    saveConversation(newConversation, chatbot?.namespace);
+    saveConversations(updatedConversations, chatbot?.namespace);
 
     dispatch({ field: 'loading', value: false });
   };
@@ -103,6 +109,7 @@ const Home = () => {
     const { single, all } = updateConversation(
       updatedConversation,
       conversations,
+      chatbot?.namespace,
     );
 
     dispatch({ field: 'selectedConversation', value: single });
@@ -116,6 +123,22 @@ const Home = () => {
       dispatch({ field: 'showChatbar', value: false });
     }
   }, [selectedConversation]);
+
+  useEffect(() => {
+    if (id) {
+      const fetchChatbot = async () => {
+        // @ts-ignore
+        const result = await getChatbotById(id, user?.sub);
+        if (result.error) {
+          console.error('Error fetching chatbot:', result.error);
+        } else {
+          // @ts-ignore
+          setChatbot(result as ChatBot);
+        }
+      };
+      fetchChatbot();
+    }
+  }, [id, user]);
 
   // ON LOAD --------------------------------------------
 
@@ -137,7 +160,9 @@ const Home = () => {
       dispatch({ field: 'showChatbar', value: showChatbar === 'true' });
     }
 
-    const conversationHistory = localStorage.getItem('conversationHistory');
+    const conversationHistory = localStorage.getItem(
+      `conversationHistory:${chatbot?.namespace}`,
+    );
     if (conversationHistory) {
       const parsedConversationHistory: Conversation[] =
         JSON.parse(conversationHistory);
@@ -148,7 +173,9 @@ const Home = () => {
       dispatch({ field: 'conversations', value: cleanedConversationHistory });
     }
 
-    const selectedConversation = localStorage.getItem('selectedConversation');
+    const selectedConversation = localStorage.getItem(
+      `selectedConversation:${chatbot?.namespace}`,
+    );
     if (selectedConversation) {
       const parsedSelectedConversation: Conversation =
         JSON.parse(selectedConversation);
@@ -173,9 +200,7 @@ const Home = () => {
         },
       });
     }
-  }, [
-    dispatch
-  ]);
+  }, [dispatch, chatbot]);
 
   return (
     <HomeContext.Provider
@@ -207,10 +232,13 @@ const Home = () => {
           </div>
 
           <div className="flex h-full w-full pt-[48px] sm:pt-0">
-            <Chatbar />
+            <Chatbar chatbot={chatbot} />
 
             <div className="flex flex-1">
-              <Chat stopConversationRef={stopConversationRef} />
+              <Chat
+                chatbot={chatbot}
+                stopConversationRef={stopConversationRef}
+              />
             </div>
           </div>
         </main>
@@ -219,7 +247,4 @@ const Home = () => {
   );
 };
 
-export default withPageAuthRequired(Home, {
-  onRedirecting: () => <Loading />,
-  onError: error => <div>{error.message}</div>
-});
+export default Chatbot;

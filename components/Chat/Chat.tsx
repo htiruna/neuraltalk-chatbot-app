@@ -10,12 +10,10 @@ import {
 } from 'react';
 import toast from 'react-hot-toast';
 
-import Image from 'next/image';
-
 import { saveConversation, saveConversations } from '@/utils/app/conversation';
 import { throttle } from '@/utils/data/throttle';
 
-import { Conversation, Message } from '@/types/chat';
+import { ChatBot, Conversation, Message } from '@/types/chat';
 
 import { ChatInput } from './ChatInput';
 import { ChatLoader } from './ChatLoader';
@@ -24,10 +22,11 @@ import { MemoizedChatMessage } from './MemoizedChatMessage';
 import HomeContext from '@/contexts/home.context';
 
 interface Props {
+  chatbot: ChatBot;
   stopConversationRef: MutableRefObject<boolean>;
 }
 
-export const Chat = memo(({ stopConversationRef }: Props) => {
+export const Chat = memo(({ chatbot, stopConversationRef }: Props) => {
   const {
     state: { selectedConversation, conversations, loading },
     handleUpdateConversation,
@@ -83,6 +82,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
         const chatBody = {
           question: message?.content,
           chat_history,
+          namespace: chatbot?.namespace,
         };
 
         const endpoint = 'api/chat';
@@ -179,7 +179,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
             });
           }
         }
-        saveConversation(updatedConversation);
+        saveConversation(updatedConversation, chatbot?.namespace);
         const updatedConversations: Conversation[] = conversations.map(
           (conversation) => {
             if (conversation.id === selectedConversation.id) {
@@ -192,7 +192,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
           updatedConversations.push(updatedConversation);
         }
         homeDispatch({ field: 'conversations', value: updatedConversations });
-        saveConversations(updatedConversations);
+        saveConversations(updatedConversations, chatbot?.namespace);
         homeDispatch({ field: 'messageIsStreaming', value: false });
       }
     },
@@ -273,70 +273,60 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
     };
   }, [messagesEndRef]);
 
+  const questions = [
+    '"How do I warm up a group?"',
+    '"What are facilitation phrases?"',
+    '"What are some ethical considerations that facilitators should keep in mind?"',
+    '"What is the purpose of facilitation and why is it important to be clear about it?"',
+  ];
+
   return (
     <div className="relative flex-1 overflow-hidden bg-white dark:bg-[#343541]">
       {
         <>
           <div
-            className="max-h-full overflow-x-hidden"
+            className="h-full overflow-x-hidden"
             ref={chatContainerRef}
             onScroll={handleScroll}
           >
             {selectedConversation?.messages.length === 0 ? (
               <>
-                <div className="mx-auto flex flex-col space-y-5 md:space-y-10 px-3 pt-5 md:pt-12 sm:max-w-[800px]">
-                  <div className="text-center text-3xl font-semibold text-gray-800 dark:text-gray-100">
-                    Curriculum Management
+                <div className="h-full mx-auto flex flex-col space-y-5 md:space-y-10 px-3 pt-5 pb-28 md:pt-12 sm:max-w-[800px] justify-center">
+                  <div className="relative mx-auto flex max-w-3xl flex-col items-center text-center">
+                    <h2 className="text-3xl font-bold tracking-tight text-black sm:text-4xl">
+                      {chatbot?.name}
+                    </h2>
+                    <p className="mt-8 text-black">
+                      Hi there, I&apos;m a chatbot trained on {chatbot?.name}.
+                      Here are some examples of questions you can ask me:
+                    </p>
                   </div>
-                  <div className="flex items-center h-full flex-row space-x-6 rounded-lg border border-neutral-200 p-4 dark:border-neutral-600">
-                    <div className="shadow-md">
-                      <Image
-                        src="/curriculum-mgmt.png"
-                        alt="Curriculum Management"
-                        width={1262}
-                        height={1724}
-                        className="max-w-[175px]"
-                      />
-                    </div>
-                    <div>
-                      <div className="text-[12px] text-black/50 dark:text-white/50 text-sm space-y-4 mb-4">
-                        <p>
-                          Hi there! I&#39;m a chatbot trained on the Curriculum
-                          Management Configuration and Processing Workbook.
-                        </p>
-                        <p className="font-bold">
-                          Examples of questions you can ask me are:
-                        </p>
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    {questions.map((question, i) => (
+                      <div
+                        key={i}
+                        className="relative flex items-center space-x-3 rounded-lg border border-gray-300 bg-white px-6 py-10 shadow-sm focus-within:ring-2 focus-within:ring-indigo-500 focus-within:ring-offset-2 hover:border-gray-400"
+                      >
+                        <div className="min-w-0 flex-1 text-center">
+                          <a href="#" className="focus:outline-none">
+                            <span
+                              className="absolute inset-0"
+                              aria-hidden="true"
+                            />
+                            <p className="text-sm font-medium text-gray-900">
+                              {question}
+                            </p>
+                          </a>
+                        </div>
                       </div>
-                      <ul className="list-disc list-inside text-[12px] text-black/50 dark:text-white/50 text-sm space-y-2">
-                        <li>
-                          What processes are included in curriculum management?
-                        </li>
-                        <li>
-                          How does curriculum management affect student study
-                          plans and enrolment?
-                        </li>
-                        <li>
-                          What fields are mandatory when creating a Study
-                          Package Availability?
-                        </li>
-                        <li>
-                          What is the purpose of configuring curriculum
-                          structures and templates?
-                        </li>
-                        <li>
-                          How can study measures be managed and configured in a
-                          study package?
-                        </li>
-                      </ul>
-                    </div>
+                    ))}
                   </div>
                 </div>
               </>
             ) : (
               <>
                 <div className="sticky top-0 z-10 flex justify-center border border-b-neutral-300 bg-neutral-100 py-2 text-sm text-neutral-500 dark:border-none dark:bg-[#444654] dark:text-neutral-200">
-                  {'Curriculum Management'}
+                  {chatbot?.name}
                   <button
                     className="ml-2 cursor-pointer hover:opacity-50"
                     onClick={onClearAll}
@@ -358,6 +348,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                         selectedConversation?.messages.length - index,
                       );
                     }}
+                    namespace={chatbot?.namespace}
                   />
                 ))}
 

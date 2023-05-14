@@ -5,9 +5,7 @@ import { useCreateReducer } from '@/hooks/useCreateReducer';
 import { DEFAULT_SYSTEM_PROMPT, DEFAULT_TEMPERATURE } from '@/utils/app/const';
 import { saveConversation, saveConversations } from '@/utils/app/conversation';
 
-import { Conversation } from '@/types/chat';
-
-import HomeContext from '@/contexts/home.context';
+import { ChatBot, Conversation } from '@/types/chat';
 
 import { ChatbarSettings } from './components/ChatbarSettings';
 import { Conversations } from './components/Conversations';
@@ -16,9 +14,14 @@ import Sidebar from '../Sidebar';
 import ChatbarContext from './Chatbar.context';
 import { ChatbarInitialState, initialState } from './Chatbar.state';
 
+import HomeContext from '@/contexts/home.context';
 import { v4 as uuidv4 } from 'uuid';
 
-export const Chatbar = () => {
+interface Props {
+  chatbot: ChatBot;
+}
+
+export const Chatbar = ({ chatbot }: Props) => {
   const chatBarContextValue = useCreateReducer<ChatbarInitialState>({
     initialState,
   });
@@ -50,8 +53,8 @@ export const Chatbar = () => {
 
     homeDispatch({ field: 'conversations', value: [] });
 
-    localStorage.removeItem('conversationHistory');
-    localStorage.removeItem('selectedConversation');
+    localStorage.removeItem(`conversationHistory:${chatbot?.namespace}`);
+    localStorage.removeItem(`selectedConversation:${chatbot?.namespace}`);
   };
 
   const handleDeleteConversation = (conversation: Conversation) => {
@@ -61,7 +64,7 @@ export const Chatbar = () => {
 
     homeDispatch({ field: 'conversations', value: updatedConversations });
     chatDispatch({ field: 'searchTerm', value: '' });
-    saveConversations(updatedConversations);
+    saveConversations(updatedConversations, chatbot?.namespace);
 
     if (updatedConversations.length > 0) {
       homeDispatch({
@@ -69,7 +72,10 @@ export const Chatbar = () => {
         value: updatedConversations[updatedConversations.length - 1],
       });
 
-      saveConversation(updatedConversations[updatedConversations.length - 1]);
+      saveConversation(
+        updatedConversations[updatedConversations.length - 1],
+        chatbot?.namespace,
+      );
     } else {
       homeDispatch({
         field: 'selectedConversation',
@@ -82,7 +88,7 @@ export const Chatbar = () => {
           folderId: null,
         },
       });
-      localStorage.removeItem('selectedConversation');
+      localStorage.removeItem(`selectedConversation:${chatbot?.namespace}`);
     }
   };
 
@@ -125,7 +131,7 @@ export const Chatbar = () => {
       value={{
         ...chatBarContextValue,
         handleDeleteConversation,
-        handleClearConversations
+        handleClearConversations,
       }}
     >
       <Sidebar<Conversation>
