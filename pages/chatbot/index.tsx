@@ -212,7 +212,7 @@ const Chatbot = () => {
       }}
     >
       <Head>
-        <title>NeuralTalk</title>
+        <title>{chatbot && `${chatbot.name} | `}NeuralTalk</title>
         <meta name="description" content="NeuralTalk" />
         <meta
           name="viewport"

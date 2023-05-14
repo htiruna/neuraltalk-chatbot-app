@@ -3,6 +3,7 @@ import { Disclosure, Menu, Transition } from '@headlessui/react';
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 import React, { Fragment, useEffect, useState } from 'react';
 
+import Head from 'next/head';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 
@@ -49,6 +50,15 @@ const Home = ({ user }: any) => {
 
   return (
     <>
+      <Head>
+        <title>Dashboard | NeuralTalk</title>
+        <meta name="description" content="NeuralTalk" />
+        <meta
+          name="viewport"
+          content="height=device-height ,width=device-width, initial-scale=1, user-scalable=no"
+        />
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
       <UploadModal open={showUploadModal} setOpen={setShowUploadModal} />
       <div className="min-h-full">
         <Disclosure as="nav" className="bg-white shadow-sm">
