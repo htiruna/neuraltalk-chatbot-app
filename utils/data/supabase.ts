@@ -1,3 +1,5 @@
+import { Message } from '@/types/chat';
+
 import { SupabaseClient, createClient } from '@supabase/supabase-js';
 
 interface Options {
@@ -27,7 +29,7 @@ export const supabaseClient = (): SupabaseClient => {
 
 export const insertUser = async (userData: UserData) => {
   const supabase = supabaseClient();
-  const { userId: auth0_id, email } = userData;
+  const { userId, email } = userData;
 
   // Check if user already exists
   const { data: existingUser, error } = await supabase
@@ -48,7 +50,7 @@ export const insertUser = async (userData: UserData) => {
   // User does not exist, insert a new one
   const { data: newUser, error: insertError } = await supabase
     .from('users')
-    .insert([{ auth0_id, email }])
+    .insert([{ id: userId, email }])
     .single();
 
   if (insertError) {
@@ -59,14 +61,14 @@ export const insertUser = async (userData: UserData) => {
   return newUser;
 };
 
-export const getChatbotsForUser = async (auth0_id: string) => {
+export const getChatbotsForUser = async (userId: string) => {
   const supabase = supabaseClient();
 
   // Get user role and id
   const { data: user, error: userError } = await supabase
     .from('users')
     .select('role, id')
-    .eq('auth0_id', auth0_id)
+    .eq('id', userId)
     .single();
 
   if (userError) {
@@ -118,4 +120,86 @@ export const getChatbotById = async (id: string, userId: string) => {
   }
 
   return chatbot;
+};
+
+export const upsertConversationAndMessages = async (
+  conversationId: string,
+  userId: string,
+  chatbotId: string,
+  messages: Message[],
+) => {
+  const supabase = supabaseClient();
+
+  // Check if conversation already exists
+  const { data: existingConversation, error: conversationError } =
+    await supabase.from('conversations').select('*').eq('id', conversationId);
+
+  if (conversationError) {
+    console.error(
+      'Error checking if conversation already exists:',
+      conversationError,
+    );
+    return { error: conversationError };
+  }
+
+  // If conversation does not exist, insert a new one
+  if (existingConversation?.length === 0) {
+    const { data: newConversation, error: newConversationError } =
+      await supabase
+        .from('conversations')
+        .insert([
+          {
+            id: conversationId,
+            user_id: userId,
+            chatbot_id: chatbotId,
+          },
+        ])
+        .single();
+
+    if (newConversationError) {
+      console.error('Error inserting new conversation:', newConversationError);
+      return { error: newConversationError };
+    }
+  }
+
+  // Get the count of messages for the conversation from the database
+  const { data: messagesCountData, error: messagesCountError } = await supabase
+    .from('messages')
+    .select('id', { count: 'exact' })
+    .eq('conversation_id', conversationId);
+
+  if (messagesCountError) {
+    console.error('Error fetching messages count:', messagesCountError);
+    return { error: messagesCountError };
+  }
+
+  const messagesCount = messagesCountData?.length ?? 0;
+
+  // Check if there's a new message to be saved
+  if (messages.length > messagesCount) {
+    // Get the new messages
+    const newMessages = messages.slice(messagesCount);
+
+    // Prepare messages to be inserted
+    const messagesToInsert = newMessages.map((message) => ({
+      conversation_id: conversationId,
+      content: message.content,
+      role: message.role,
+    }));
+
+    // Insert messages
+    const { data: insertedMessages, error: newMessagesError } = await supabase
+      .from('messages')
+      .insert(messagesToInsert);
+
+    if (newMessagesError) {
+      console.error('Error inserting new messages:', newMessagesError);
+      return { error: newMessagesError };
+    }
+
+    return { messages: insertedMessages };
+  }
+
+  // No new message to be saved
+  return { messages: null };
 };

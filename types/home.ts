@@ -1,5 +1,4 @@
-import { Conversation, Message } from "./chat";
-import { Prompt } from "./prompt";
+import { Conversation, Message } from './chat';
 
 export interface HomeInitialState {
   loading: boolean;

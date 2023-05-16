@@ -1,11 +1,10 @@
 // @ts-nocheck
 import { Disclosure, Menu, Transition } from '@headlessui/react';
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { Fragment, useContext, useEffect, useState } from 'react';
 
 import Head from 'next/head';
 import Image from 'next/image';
-import { useRouter } from 'next/router';
 
 import { getChatbotsForUser } from '@/utils/data/supabase';
 
@@ -27,8 +26,6 @@ const Home = ({ user }: any) => {
   const [chatbots, setChatbots] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showUploadModal, setShowUploadModal] = useState(false);
-
-  const router = useRouter();
 
   useEffect(() => {
     const fetchChatbots = async () => {
@@ -205,13 +202,13 @@ const Home = ({ user }: any) => {
                   </h1>
                 </div>
                 <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
-                  <button
+                  {/* <button
                     type="button"
                     className="block rounded-md bg-amber-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-amber-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-600"
                     onClick={() => setShowUploadModal(true)}
                   >
                     Create chatbot
-                  </button>
+                  </button> */}
                 </div>
               </div>
               <div className="mt-8 flow-root">

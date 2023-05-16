@@ -11,6 +11,7 @@ import {
 import toast from 'react-hot-toast';
 
 import { saveConversation, saveConversations } from '@/utils/app/conversation';
+import { upsertConversationAndMessages } from '@/utils/data/supabase';
 import { throttle } from '@/utils/data/throttle';
 
 import { ChatBot, Conversation, Message } from '@/types/chat';
@@ -20,6 +21,7 @@ import { ChatLoader } from './ChatLoader';
 import { MemoizedChatMessage } from './MemoizedChatMessage';
 
 import HomeContext from '@/contexts/home.context';
+import { useUser } from '@auth0/nextjs-auth0/client';
 
 interface Props {
   chatbot: ChatBot;
@@ -32,6 +34,8 @@ export const Chat = memo(({ chatbot, stopConversationRef }: Props) => {
     handleUpdateConversation,
     dispatch: homeDispatch,
   } = useContext(HomeContext);
+
+  const { user } = useUser();
 
   const [currentMessage, setCurrentMessage] = useState<Message>();
   const [autoScrollEnabled, setAutoScrollEnabled] = useState<boolean>(true);
@@ -180,6 +184,17 @@ export const Chat = memo(({ chatbot, stopConversationRef }: Props) => {
           }
         }
         saveConversation(updatedConversation, chatbot?.namespace);
+
+        if (updatedConversation.messages.length > 0) {
+          upsertConversationAndMessages(
+            updatedConversation.id,
+            // @ts-ignore
+            user.sub,
+            chatbot.id,
+            updatedConversation.messages,
+          );
+        }
+
         const updatedConversations: Conversation[] = conversations.map(
           (conversation) => {
             if (conversation.id === selectedConversation.id) {
@@ -306,6 +321,10 @@ export const Chat = memo(({ chatbot, stopConversationRef }: Props) => {
                       <div
                         key={i}
                         className="relative flex items-center space-x-3 rounded-lg border border-gray-300 bg-white px-6 py-10 shadow-sm focus-within:ring-2 focus-within:ring-indigo-500 focus-within:ring-offset-2 hover:border-gray-400"
+                        onClick={() => {
+                          const content = question.replace(/"/g, '');
+                          handleSend({ role: 'user', content });
+                        }}
                       >
                         <div className="min-w-0 flex-1 text-center">
                           <a href="#" className="focus:outline-none">
