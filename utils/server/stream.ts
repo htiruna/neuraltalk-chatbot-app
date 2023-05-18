@@ -52,8 +52,6 @@ export const OpenAIStream = async (
           question: sanitizedQuestion,
           chat_history: chat_history || [],
         });
-
-        console.log('response', response);
       } catch (error) {
         console.log('error', error);
         controller.error(error);

@@ -28,6 +28,21 @@ interface Props {
   stopConversationRef: MutableRefObject<boolean>;
 }
 
+const EXAMPLE_QUESTIONS: { [key: string]: string[] } = {
+  'instructional-design': [
+    'What are some strategies for designing effective learning environments?',
+    'What are the key questions to consider when assessing performance gaps?',
+    'How can data be collected and processed to make it useful for decision-making?',
+    'What are some best practices for promoting transfer of learning and automating new knowledge and skills?',
+  ],
+  'facilitation-skills': [
+    '"How do I warm up a group?"',
+    '"What are facilitation phrases?"',
+    '"What are some ethical considerations that facilitators should keep in mind?"',
+    '"What is the purpose of facilitation and why is it important to be clear about it?"',
+  ],
+};
+
 export const Chat = memo(({ chatbot, stopConversationRef }: Props) => {
   const {
     state: { selectedConversation, conversations, loading },
@@ -114,13 +129,9 @@ export const Chat = memo(({ chatbot, stopConversationRef }: Props) => {
           return;
         }
         if (updatedConversation.messages.length === 1) {
-          console.log('updatedConversation length equals 1');
           const { content } = message;
-          console.log('message content', content);
           const customName =
             content.length > 30 ? content.substring(0, 30) + '...' : content;
-          console.log('customName', customName);
-
           updatedConversation = {
             ...updatedConversation,
             name: customName,
@@ -139,14 +150,11 @@ export const Chat = memo(({ chatbot, stopConversationRef }: Props) => {
             break;
           }
           const { value, done: doneReading } = await reader.read();
-          console.log('reading', value);
           done = doneReading;
           const chunkValue = decoder.decode(value);
-          console.log('chunkValue', chunkValue);
 
           text += chunkValue;
           if (isFirst) {
-            console.log('reading first chunk');
             isFirst = false;
             const updatedMessages: Message[] = [
               ...updatedConversation.messages,
@@ -161,7 +169,6 @@ export const Chat = memo(({ chatbot, stopConversationRef }: Props) => {
               value: updatedConversation,
             });
           } else {
-            console.log('reading chunks after first');
             const updatedMessages: Message[] = updatedConversation.messages.map(
               (message, index) => {
                 if (index === updatedConversation.messages.length - 1) {
@@ -288,13 +295,6 @@ export const Chat = memo(({ chatbot, stopConversationRef }: Props) => {
     };
   }, [messagesEndRef]);
 
-  const questions = [
-    '"How do I warm up a group?"',
-    '"What are facilitation phrases?"',
-    '"What are some ethical considerations that facilitators should keep in mind?"',
-    '"What is the purpose of facilitation and why is it important to be clear about it?"',
-  ];
-
   return (
     <div className="relative flex-1 overflow-hidden bg-white dark:bg-[#343541]">
       {
@@ -317,28 +317,30 @@ export const Chat = memo(({ chatbot, stopConversationRef }: Props) => {
                     </p>
                   </div>
                   <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                    {questions.map((question, i) => (
-                      <div
-                        key={i}
-                        className="relative flex items-center space-x-3 rounded-lg border border-gray-300 bg-white px-6 py-10 shadow-sm focus-within:ring-2 focus-within:ring-indigo-500 focus-within:ring-offset-2 hover:border-gray-400"
-                        onClick={() => {
-                          const content = question.replace(/"/g, '');
-                          handleSend({ role: 'user', content });
-                        }}
-                      >
-                        <div className="min-w-0 flex-1 text-center">
-                          <a href="#" className="focus:outline-none">
-                            <span
-                              className="absolute inset-0"
-                              aria-hidden="true"
-                            />
-                            <p className="text-sm font-medium text-gray-900">
-                              {question}
-                            </p>
-                          </a>
+                    {EXAMPLE_QUESTIONS[chatbot.namespace].map(
+                      (question: string, i) => (
+                        <div
+                          key={i}
+                          className="relative flex items-center space-x-3 rounded-lg border border-gray-300 bg-white px-6 py-10 shadow-sm focus-within:ring-2 focus-within:ring-indigo-500 focus-within:ring-offset-2 hover:border-gray-400"
+                          onClick={() => {
+                            const content = question.replace(/"/g, '');
+                            handleSend({ role: 'user', content });
+                          }}
+                        >
+                          <div className="min-w-0 flex-1 text-center">
+                            <a href="#" className="focus:outline-none">
+                              <span
+                                className="absolute inset-0"
+                                aria-hidden="true"
+                              />
+                              <p className="text-sm font-medium text-gray-900">
+                                {question}
+                              </p>
+                            </a>
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      ),
+                    )}
                   </div>
                 </div>
               </>

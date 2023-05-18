@@ -33,7 +33,6 @@ const Home = ({ user }: any) => {
       if (result.error) {
         console.error('Error fetching chatbots:', result.error);
       } else {
-        console.log('Chatbots:', result);
         setChatbots(result);
       }
       setLoading(false);
