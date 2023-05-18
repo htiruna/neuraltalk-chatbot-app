@@ -317,7 +317,7 @@ export const Chat = memo(({ chatbot, stopConversationRef }: Props) => {
                     </p>
                   </div>
                   <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                    {EXAMPLE_QUESTIONS[chatbot.namespace].map(
+                    {EXAMPLE_QUESTIONS[chatbot?.namespace]?.map(
                       (question: string, i) => (
                         <div
                           key={i}
