@@ -151,4 +151,5 @@ export const ChatMessage: FC<Props> = memo(
     );
   },
 );
+
 ChatMessage.displayName = 'ChatMessage';
