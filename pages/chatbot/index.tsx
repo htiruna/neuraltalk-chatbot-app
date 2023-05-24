@@ -237,7 +237,11 @@ const Chatbot = () => {
             </div>
           )}
 
-          <div className="flex h-full w-full pt-[48px] sm:pt-0">
+          <div
+            className={`flex h-full w-full ${
+              !isIframe ? 'pt-[48px]' : ''
+            } sm:pt-0`}
+          >
             {!isIframe && <Chatbar chatbot={chatbot} />}
 
             <div className="flex flex-1">

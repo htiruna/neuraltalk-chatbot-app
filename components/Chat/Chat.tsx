@@ -384,15 +384,7 @@ export const Chat = memo(
                       key={index}
                       message={message}
                       messageIndex={index}
-                      onEdit={(editedMessage) => {
-                        setCurrentMessage(editedMessage);
-                        // discard edited message and the ones that come after then resend
-                        handleSend(
-                          editedMessage,
-                          conversationMessages?.length - index,
-                        );
-                      }}
-                      namespace={chatbot?.namespace}
+                      isIframe={isIframe}
                     />
                   ))}
 
@@ -414,12 +406,8 @@ export const Chat = memo(
                 handleSend(message, 0);
               }}
               onScrollDownClick={handleScrollDown}
-              onRegenerate={() => {
-                if (currentMessage) {
-                  handleSend(currentMessage, 2);
-                }
-              }}
               showScrollDownButton={showScrollDownButton}
+              isIframe={isIframe}
             />
           </>
         }
