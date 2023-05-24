@@ -46,7 +46,8 @@ const initialState: HomeInitialState = {
 
 const Chatbot = () => {
   const router = useRouter();
-  const { id } = router.query;
+  const { id, iframe } = router.query;
+  const isIframe = iframe === 'true';
 
   const { user, error: authError, isLoading } = useUser();
 
@@ -160,33 +161,36 @@ const Chatbot = () => {
       dispatch({ field: 'showChatbar', value: showChatbar === 'true' });
     }
 
-    const conversationHistory = localStorage.getItem(
-      `conversationHistory:${chatbot?.namespace}`,
-    );
-    if (conversationHistory) {
-      const parsedConversationHistory: Conversation[] =
-        JSON.parse(conversationHistory);
-      const cleanedConversationHistory = cleanConversationHistory(
-        parsedConversationHistory,
+    // Prevent chat history and selected conversation from being populated if the iframe query parameter is true
+    if (!isIframe) {
+      const conversationHistory = localStorage.getItem(
+        `conversationHistory:${chatbot?.namespace}`,
       );
+      if (conversationHistory) {
+        const parsedConversationHistory: Conversation[] =
+          JSON.parse(conversationHistory);
+        const cleanedConversationHistory = cleanConversationHistory(
+          parsedConversationHistory,
+        );
 
-      dispatch({ field: 'conversations', value: cleanedConversationHistory });
-    }
+        dispatch({ field: 'conversations', value: cleanedConversationHistory });
+      }
 
-    const selectedConversation = localStorage.getItem(
-      `selectedConversation:${chatbot?.namespace}`,
-    );
-    if (selectedConversation) {
-      const parsedSelectedConversation: Conversation =
-        JSON.parse(selectedConversation);
-      const cleanedSelectedConversation = cleanSelectedConversation(
-        parsedSelectedConversation,
+      const selectedConversation = localStorage.getItem(
+        `selectedConversation:${chatbot?.namespace}`,
       );
+      if (selectedConversation) {
+        const parsedSelectedConversation: Conversation =
+          JSON.parse(selectedConversation);
+        const cleanedSelectedConversation = cleanSelectedConversation(
+          parsedSelectedConversation,
+        );
 
-      dispatch({
-        field: 'selectedConversation',
-        value: cleanedSelectedConversation,
-      });
+        dispatch({
+          field: 'selectedConversation',
+          value: cleanedSelectedConversation,
+        });
+      }
     } else {
       const lastConversation = conversations[conversations.length - 1];
       dispatch({
@@ -200,7 +204,7 @@ const Chatbot = () => {
         },
       });
     }
-  }, [dispatch, chatbot]);
+  }, [dispatch, chatbot, isIframe]);
 
   return (
     <HomeContext.Provider
@@ -224,20 +228,23 @@ const Chatbot = () => {
         <main
           className={`flex h-screen w-screen flex-col text-sm text-white dark:text-white ${lightMode}`}
         >
-          <div className="fixed top-0 w-full sm:hidden">
-            <Navbar
-              selectedConversation={selectedConversation}
-              onNewConversation={handleNewConversation}
-            />
-          </div>
+          {!iframe && (
+            <div className="fixed top-0 w-full sm:hidden">
+              <Navbar
+                selectedConversation={selectedConversation}
+                onNewConversation={handleNewConversation}
+              />
+            </div>
+          )}
 
           <div className="flex h-full w-full pt-[48px] sm:pt-0">
-            <Chatbar chatbot={chatbot} />
+            {!isIframe && <Chatbar chatbot={chatbot} />}
 
             <div className="flex flex-1">
               <Chat
                 chatbot={chatbot}
                 stopConversationRef={stopConversationRef}
+                isIframe={isIframe}
               />
             </div>
           </div>
