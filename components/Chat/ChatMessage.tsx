@@ -30,6 +30,12 @@ export const ChatMessage: FC<Props> = memo(
       setMessageContent(message.content);
     }, [message.content]);
 
+    let endMessageIndicatorIndex =
+      (selectedConversation?.messages.length ?? 0) - 1;
+    if (isIframe) {
+      endMessageIndicatorIndex = endMessageIndicatorIndex + 2;
+    }
+
     return (
       <div
         className={`group md:px-4 ${
@@ -132,8 +138,7 @@ export const ChatMessage: FC<Props> = memo(
                 >
                   {`${message.content}${
                     messageIsStreaming &&
-                    messageIndex ==
-                      (selectedConversation?.messages.length ?? 0) - 1
+                    messageIndex == endMessageIndicatorIndex
                       ? '`▍`'
                       : ''
                   }`}
