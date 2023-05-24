@@ -68,7 +68,9 @@ export const ChatMessage: FC<Props> = memo(
             {message.role === 'user' ? (
               <div className="flex w-full">
                 <div
-                  className={`prose max-w-prose whitespace-pre-wrap dark:prose-invert`}
+                  className={`prose ${
+                    isIframe ? 'max-w-none' : ''
+                  } whitespace-pre-wrap dark:prose-invert`}
                 >
                   {message.content}
                 </div>
@@ -76,7 +78,7 @@ export const ChatMessage: FC<Props> = memo(
             ) : (
               <div className="flex flex-row">
                 <MemoizedReactMarkdown
-                  className={`prose max-w-prose dark:prose-invert ${
+                  className={`prose dark:prose-invert ${
                     isIframe ? 'max-w-none' : ''
                   }`}
                   remarkPlugins={[remarkGfm, remarkMath]}
