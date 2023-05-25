@@ -76,7 +76,7 @@ export const ChatMessage: FC<Props> = memo(
                 </div>
               </div>
             ) : (
-              <div className="flex flex-row">
+              <div className="flex w-full">
                 <MemoizedReactMarkdown
                   className={`prose dark:prose-invert ${
                     isIframe ? 'max-w-none' : ''

@@ -388,7 +388,7 @@ export const Chat = memo(
                     />
                   ))}
 
-                  {loading && <ChatLoader />}
+                  {loading && <ChatLoader isIframe={isIframe} />}
 
                   <div
                     className="h-[162px] bg-white dark:bg-[#343541]"
@@ -415,4 +415,5 @@ export const Chat = memo(
     );
   },
 );
+
 Chat.displayName = 'Chat';
