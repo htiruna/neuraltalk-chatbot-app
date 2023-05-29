@@ -53,7 +53,7 @@ const DEFAULT_IFRAME_MESSAGES = [
   {
     role: 'assistant',
     content:
-      "If you'd like to chat to a team member at any time, please ring 02 9211 9414",
+      "If you'd like to chat to a team member at any time, please ring 02 9211 9414.",
   },
 ];
 

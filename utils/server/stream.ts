@@ -48,7 +48,7 @@ export const OpenAIStream = async (
 
       try {
         // Ask a question
-        const response = await chain.call({
+        await chain.call({
           question: sanitizedQuestion,
           chat_history: chat_history || [],
         });
