@@ -192,20 +192,19 @@ const Chatbot = () => {
           field: 'selectedConversation',
           value: cleanedSelectedConversation,
         });
-      } else {
-        const lastConversation = conversations[conversations.length - 1];
-        dispatch({
-          field: 'selectedConversation',
-          value: {
-            id: uuidv4(),
-            name: 'New Conversation',
-            messages: [],
-            prompt: DEFAULT_SYSTEM_PROMPT,
-            temperature: lastConversation?.temperature ?? DEFAULT_TEMPERATURE,
-          },
-        });
       }
     }
+    const lastConversation = conversations[conversations.length - 1];
+    dispatch({
+      field: 'selectedConversation',
+      value: {
+        id: uuidv4(),
+        name: 'New Conversation',
+        messages: [],
+        prompt: DEFAULT_SYSTEM_PROMPT,
+        temperature: lastConversation?.temperature ?? DEFAULT_TEMPERATURE,
+      },
+    });
   }, [chatbot, dispatch]);
 
   return (
