@@ -163,37 +163,35 @@ const Chatbot = () => {
       dispatch({ field: 'showChatbar', value: showChatbar === 'true' });
     }
 
-    if (chatbot) {
-      if (!isIframe) {
-        const conversationHistory = localStorage.getItem(
-          `conversationHistory:${chatbot.namespace}`,
+    if (chatbot && !isIframe) {
+      const conversationHistory = localStorage.getItem(
+        `conversationHistory:${chatbot.namespace}`,
+      );
+      if (conversationHistory) {
+        const parsedConversationHistory: Conversation[] =
+          JSON.parse(conversationHistory);
+        const cleanedConversationHistory = cleanConversationHistory(
+          parsedConversationHistory,
         );
-        if (conversationHistory) {
-          const parsedConversationHistory: Conversation[] =
-            JSON.parse(conversationHistory);
-          const cleanedConversationHistory = cleanConversationHistory(
-            parsedConversationHistory,
-          );
-          dispatch({
-            field: 'conversations',
-            value: cleanedConversationHistory,
-          });
-        }
+        dispatch({
+          field: 'conversations',
+          value: cleanedConversationHistory,
+        });
+      }
 
-        const selectedConversation = localStorage.getItem(
-          `selectedConversation:${chatbot.namespace}`,
+      const selectedConversation = localStorage.getItem(
+        `selectedConversation:${chatbot.namespace}`,
+      );
+      if (selectedConversation) {
+        const parsedSelectedConversation: Conversation =
+          JSON.parse(selectedConversation);
+        const cleanedSelectedConversation = cleanSelectedConversation(
+          parsedSelectedConversation,
         );
-        if (selectedConversation) {
-          const parsedSelectedConversation: Conversation =
-            JSON.parse(selectedConversation);
-          const cleanedSelectedConversation = cleanSelectedConversation(
-            parsedSelectedConversation,
-          );
-          dispatch({
-            field: 'selectedConversation',
-            value: cleanedSelectedConversation,
-          });
-        }
+        dispatch({
+          field: 'selectedConversation',
+          value: cleanedSelectedConversation,
+        });
       } else {
         const lastConversation = conversations[conversations.length - 1];
         dispatch({
@@ -208,7 +206,7 @@ const Chatbot = () => {
         });
       }
     }
-  }, [chatbot, isIframe, dispatch]);
+  }, [chatbot, dispatch]);
 
   return (
     <HomeContext.Provider
