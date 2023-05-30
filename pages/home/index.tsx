@@ -69,12 +69,14 @@ const Home = ({ user }: any) => {
                         src="/navbar-logo.png"
                         width={100}
                         height={100}
+                        alt="NeuralTalk"
                       />
                       <Image
                         className="hidden h-10 w-auto lg:block"
                         src="/navbar-logo.png"
                         width={100}
                         height={100}
+                        alt="NeuralTalk"
                       />
                     </div>
                     <div className="hidden sm:-my-px sm:ml-6 sm:flex sm:space-x-8">
