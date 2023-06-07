@@ -24,7 +24,6 @@ import { HomeInitialState } from '@/types/home';
 
 import { Chat } from '@/components/Chat/Chat';
 import { Chatbar } from '@/components/Chatbar/Chatbar';
-import Loading from '@/components/Loading';
 import { Navbar } from '@/components/Mobile/Navbar';
 
 import HomeContext from '@/contexts/home.context';

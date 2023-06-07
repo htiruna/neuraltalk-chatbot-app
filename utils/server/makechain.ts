@@ -17,7 +17,6 @@ Standalone question:`);
 
 const QA_PROMPT =
   PromptTemplate.fromTemplate(`You are a helpful AI assistant. Use the following pieces of context to answer the question at the end.
-{context}
 Question: {question}
 Helpful answer:`);
 
@@ -30,6 +29,8 @@ export const makeChain = (
     llm: new OpenAIChat({ temperature: 1 }),
     prompt: CONDENSE_PROMPT,
   });
+
+  console.log(QA_PROMPT);
 
   const docChain = loadQAStuffChain(
     new OpenAIChat({

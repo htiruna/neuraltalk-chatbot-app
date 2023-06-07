@@ -42,6 +42,12 @@ const EXAMPLE_QUESTIONS: { [key: string]: string[] } = {
     '"What are some ethical considerations that facilitators should keep in mind?"',
     '"What is the purpose of facilitation and why is it important to be clear about it?"',
   ],
+  'connected-leadership': [
+    '"What is connected leadership?"',
+    '"What is the model for connected leadership?"',
+    '"What are the challenges of hybrid working?"',
+    '"What are the new roles and expectations of hybrid team leaders?"',
+  ],
 };
 
 const DEFAULT_IFRAME_MESSAGES = [

@@ -1,7 +1,8 @@
-import Image from 'next/image';
 import Link from 'next/link';
 
 import { ChatBot } from '@/types/chat';
+
+import ImageWithFallback from '@/components/ImageWithFallback';
 
 interface Props {
   chatbot: ChatBot;
@@ -12,7 +13,7 @@ const ChatbotCard = ({ chatbot }: Props) => {
     <li className="col-span-1">
       <Link href={`/chatbot?id=${chatbot.id}`}>
         <div className="group bg-white relative text-left bg-panel-header-light dark:bg-panel-header-dark border border-panel-border-light dark:border-panel-border-dark rounded-md py-4 px-6 flex flex-row transition ease-in-out duration-150 h-48 cursor-pointer hover:bg-panel-border-light dark:hover:bg-panel-border-dark hover:border-panel-border-hover-light dark:hover:border-panel-border-hover-dark hover:border-gray-300 shadow-sm">
-          <Image
+          <ImageWithFallback
             src={`/thumbnails/${chatbot.namespace}.png`}
             width={100}
             height={100}
