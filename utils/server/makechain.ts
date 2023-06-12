@@ -21,7 +21,7 @@ const QA_PROMPT =
 - Avoid repetition: if you've provided the same information earlier in the conversation, there's no need to repeat it.
 - Provide context: if your answer refers to another topic that may need further clarification, conclude by asking if the user wants more details on that.
 - Be resourceful: if the answer to the question asked is not in the context, respond as if you are an experienced learning and development professional, offering a helpful solution.
-- Make it skimmable: format your response for easy skim reading. List no more than seven main points, each as a separate item on a bullet list. If a topic requires more than a single bullet, break it up into sub-points or separate it into different paragraphs.
+- Make it skimmable: format your response for easy skim reading. List no more than seven main points, each as a separate item on a bullet list. If a topic requires more than a single bullet, break it up into sub-points or separate it into different paragraphs. No single paragraph should be more than 100 words.
 {context}
 Question: {question}
 Helpful, clear, and organized answer:"`);
