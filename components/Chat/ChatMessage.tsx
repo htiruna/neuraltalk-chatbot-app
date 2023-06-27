@@ -9,7 +9,6 @@ import { MemoizedReactMarkdown } from '../Markdown/MemoizedReactMarkdown';
 import HomeContext from '@/contexts/home.context';
 import rehypeMathjax from 'rehype-mathjax';
 import remarkGfm from 'remark-gfm';
-import remarkMath from 'remark-math';
 
 export interface Props {
   message: Message;
@@ -81,7 +80,7 @@ export const ChatMessage: FC<Props> = memo(
                   className={`prose dark:prose-invert ${
                     isIframe ? 'max-w-none' : ''
                   }`}
-                  remarkPlugins={[remarkGfm, remarkMath]}
+                  remarkPlugins={[remarkGfm]}
                   rehypePlugins={[rehypeMathjax]}
                   components={{
                     code({ node, inline, className, children, ...props }) {

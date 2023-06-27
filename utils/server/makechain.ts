@@ -26,15 +26,17 @@ export const makeChain = (
   onTokenStream?: (token: string) => void,
   namespace?: string,
 ) => {
+  const temperature = 0;
+
   const questionGenerator = new LLMChain({
-    llm: new OpenAIChat({ temperature: 1 }),
+    llm: new OpenAIChat({ temperature }),
     prompt: CONDENSE_PROMPT,
   });
 
   const docChain = loadQAStuffChain(
     new OpenAIChat({
-      temperature: 0,
-      modelName: 'gpt-3.5-turbo', //change this to older versions (e.g. gpt-3.5-turbo) if you don't have access to gpt-4
+      temperature,
+      modelName: 'gpt-3.5-turbo-16k', //change this to older versions (e.g. gpt-3.5-turbo) if you don't have access to gpt-4
       streaming: Boolean(onTokenStream),
       callbackManager: onTokenStream
         ? CallbackManager.fromHandlers({
@@ -52,7 +54,7 @@ export const makeChain = (
   }
 
   return new ConversationalRetrievalQAChain({
-    retriever: vectorStore.asRetriever(8),
+    retriever: vectorStore.asRetriever(12),
     combineDocumentsChain: docChain,
     questionGeneratorChain: questionGenerator,
   });
