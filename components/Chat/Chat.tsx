@@ -48,12 +48,7 @@ const DEFAULT_IFRAME_MESSAGES = [
   {
     role: 'assistant',
     content:
-      "Hi! I'm AITD's GPT-Trained chat bot. Feel free to ask me any questions about AITD, and if I know the answer, I'll let you know.",
-  },
-  {
-    role: 'assistant',
-    content:
-      "If you'd like to chat to a team member at any time, please ring 02 9211 9414.",
+      "Hi! I'm an AI-powered ChatBot that is trained on AITD related topics. If you have any questions, please ask me and I'll try my best to answer. Otherwise, you can contact a team member on +61 2 9211 9414.",
   },
 ];
 
@@ -67,8 +62,10 @@ export const Chat = memo(
 
     const { user } = useUser();
 
-    const [currentMessage, setCurrentMessage] = useState<Message>();
-    const [autoScrollEnabled, setAutoScrollEnabled] = useState<boolean>(true);
+    const [_, setCurrentMessage] = useState<Message>();
+    const [autoScrollEnabled, setAutoScrollEnabled] = useState<boolean>(
+      !isIframe,
+    );
     const [showScrollDownButton, setShowScrollDownButton] =
       useState<boolean>(false);
 
@@ -278,7 +275,9 @@ export const Chat = memo(
     const throttledScrollDown = throttle(scrollDown, 250);
 
     useEffect(() => {
-      throttledScrollDown();
+      if (!isIframe) {
+        throttledScrollDown();
+      }
       selectedConversation &&
         setCurrentMessage(
           selectedConversation.messages[
