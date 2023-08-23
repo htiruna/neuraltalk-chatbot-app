@@ -32,7 +32,7 @@ export const ChatMessage: FC<Props> = memo(
     let endMessageIndicatorIndex =
       (selectedConversation?.messages.length ?? 0) - 1;
     if (isIframe) {
-      endMessageIndicatorIndex = endMessageIndicatorIndex + 2;
+      endMessageIndicatorIndex = endMessageIndicatorIndex + 1;
     }
 
     return (

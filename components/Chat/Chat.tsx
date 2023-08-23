@@ -205,11 +205,11 @@ export const Chat = memo(
 
           if (updatedConversation.messages.length > 0) {
             upsertConversationAndMessages(
-              updatedConversation.id,
+              updatedConversation?.id,
               // @ts-ignore
               user?.sub,
-              chatbot.id,
-              updatedConversation.messages,
+              chatbot?.id,
+              updatedConversation?.messages,
             );
           }
 
